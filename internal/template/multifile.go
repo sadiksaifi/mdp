@@ -343,7 +343,7 @@ body:has(.sidebar.collapsed) .content {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 50;
+    z-index: 150;
     opacity: 0;
     transition: opacity var(--transition-speed) ease;
 }
