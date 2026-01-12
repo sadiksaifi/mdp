@@ -609,6 +609,7 @@ const sidebarJS = `
         if (isMobile()) {
             sidebar.classList.add('open');
             overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
         } else {
             sidebar.classList.remove('collapsed');
             localStorage.setItem('mdp-sidebar-collapsed', 'false');
@@ -619,6 +620,7 @@ const sidebarJS = `
         if (isMobile()) {
             sidebar.classList.remove('open');
             overlay.classList.remove('active');
+            document.body.style.overflow = '';
         } else {
             sidebar.classList.add('collapsed');
             localStorage.setItem('mdp-sidebar-collapsed', 'true');
