@@ -457,6 +457,25 @@ body:has(.sidebar.collapsed) .content {
     padding: 0;
     max-height: 300px;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--sidebar-border) transparent;
+}
+
+.search-palette-results::-webkit-scrollbar {
+    width: 8px;
+}
+
+.search-palette-results::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.search-palette-results::-webkit-scrollbar-thumb {
+    background-color: var(--sidebar-border);
+    border-radius: 4px;
+}
+
+.search-palette-results::-webkit-scrollbar-thumb:hover {
+    background-color: var(--fg-muted);
 }
 
 .search-palette-item {
