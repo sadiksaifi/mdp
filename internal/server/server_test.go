@@ -1,6 +1,7 @@
 package server
 
 import (
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -416,4 +417,73 @@ func TestServer_Stop(t *testing.T) {
 	if err := srv.Stop(); err != nil {
 		t.Errorf("Stop() error = %v", err)
 	}
+}
+
+func TestServer_findAvailablePort(t *testing.T) {
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "test.md")
+	if err := os.WriteFile(tmpFile, []byte("# Test"), 0644); err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+
+	t.Run("finds available port", func(t *testing.T) {
+		srv, err := New(0, []string{tmpFile}) // Port 0 lets OS assign
+		if err != nil {
+			t.Fatalf("Failed to create server: %v", err)
+		}
+		defer srv.Stop()
+
+		// Use a high random port that's likely available
+		srv.port = 19876
+
+		if err := srv.regenerateHTML(); err != nil {
+			t.Fatalf("Failed to regenerate HTML: %v", err)
+		}
+
+		listener, err := srv.findAvailablePort()
+		if err != nil {
+			t.Errorf("findAvailablePort() error = %v", err)
+			return
+		}
+		defer listener.Close()
+
+		if srv.port < 19876 {
+			t.Errorf("findAvailablePort() port = %d, expected >= 19876", srv.port)
+		}
+	})
+
+	t.Run("tries next port when occupied", func(t *testing.T) {
+		srv, err := New(0, []string{tmpFile})
+		if err != nil {
+			t.Fatalf("Failed to create server: %v", err)
+		}
+		defer srv.Stop()
+
+		// Occupy a port
+		occupiedPort := 19877
+		occupiedListener, err := net.Listen("tcp", ":19877")
+		if err != nil {
+			t.Fatalf("Failed to occupy port: %v", err)
+		}
+		defer occupiedListener.Close()
+
+		// Try to find port starting from occupied one
+		srv.port = occupiedPort
+
+		if err := srv.regenerateHTML(); err != nil {
+			t.Fatalf("Failed to regenerate HTML: %v", err)
+		}
+
+		listener, err := srv.findAvailablePort()
+		if err != nil {
+			t.Errorf("findAvailablePort() error = %v", err)
+			return
+		}
+		defer listener.Close()
+
+		// Should have found a port greater than the occupied one
+		if srv.port <= occupiedPort {
+			t.Errorf("findAvailablePort() should find port > %d, got %d", occupiedPort, srv.port)
+		}
+	})
 }
