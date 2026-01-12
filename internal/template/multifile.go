@@ -127,28 +127,11 @@ body {
     width: var(--sidebar-width);
     background: var(--sidebar-bg);
     border-right: 1px solid var(--sidebar-border);
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     z-index: 200;
     transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease;
-    scrollbar-width: thin;
-    scrollbar-color: var(--sidebar-border) transparent;
-}
-
-.sidebar::-webkit-scrollbar {
-    width: 8px;
-}
-
-.sidebar::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-    background-color: var(--sidebar-border);
-    border-radius: 4px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-    background-color: var(--fg-muted);
 }
 
 .sidebar.collapsed {
@@ -161,10 +144,9 @@ body {
     align-items: center;
     padding: 16px;
     border-bottom: 1px solid var(--sidebar-border);
-    position: sticky;
-    top: 0;
     background: var(--sidebar-bg);
     z-index: 10;
+    flex-shrink: 0;
 }
 
 .sidebar-header h2 {
@@ -242,6 +224,27 @@ body:has(.sidebar.collapsed) .floating-buttons {
 
 .file-tree {
     padding: 8px 0;
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--sidebar-border) transparent;
+}
+
+.file-tree::-webkit-scrollbar {
+    width: 8px;
+}
+
+.file-tree::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.file-tree::-webkit-scrollbar-thumb {
+    background-color: var(--sidebar-border);
+    border-radius: 4px;
+}
+
+.file-tree::-webkit-scrollbar-thumb:hover {
+    background-color: var(--fg-muted);
 }
 
 .file-tree ul {
@@ -368,7 +371,7 @@ body:has(.sidebar.collapsed) .content {
         top: 0;
         left: 0;
         right: 0;
-        height: 56px;
+        height: 58px;
         background: var(--sidebar-bg);
         border-bottom: 1px solid var(--sidebar-border);
         padding: 0 12px;
@@ -396,7 +399,7 @@ body:has(.sidebar.collapsed) .content {
 
     .content {
         margin-left: 0;
-        padding: 72px 20px 20px;
+        padding: 74px 20px 20px;
     }
 
     .sidebar-overlay {
