@@ -805,12 +805,12 @@ const sidebarJS = `
                 selectCurrentFile();
                 return;
             }
-            if (e.key === 'ArrowDown' || (e.key === 'n' && (e.metaKey || e.ctrlKey))) {
+            if (e.key === 'ArrowDown' || (e.key === 'n' && e.ctrlKey)) {
                 e.preventDefault();
                 moveSelection(1);
                 return;
             }
-            if (e.key === 'ArrowUp' || (e.key === 'p' && (e.metaKey || e.ctrlKey))) {
+            if (e.key === 'ArrowUp' || (e.key === 'p' && e.ctrlKey)) {
                 e.preventDefault();
                 moveSelection(-1);
                 return;
