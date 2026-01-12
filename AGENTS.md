@@ -53,7 +53,8 @@ assets/               # Original CSS file (also embedded in template package)
 - Cross-platform: supports macOS (`open`), Linux (`xdg-open`), and Windows (`rundll32`)
 - Directory scanning respects `.gitignore` files at all levels using `github.com/sabhiram/go-gitignore`
 - Multi-file sidebar is collapsible on desktop (state persisted in localStorage)
-- Mobile responsive: sidebar becomes overlay with hamburger menu at ≤768px
+- Mobile responsive: sidebar becomes overlay with top bar navigation at ≤768px
+- Fuzzy search palette: Cmd/Ctrl+K opens search, arrow keys or Ctrl+P/N to navigate, Enter to select
 - Keyboard shortcut: Cmd+B (Mac) / Ctrl+B (Win/Linux) toggles sidebar on desktop
 
 ## Development Guidelines

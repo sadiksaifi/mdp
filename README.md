@@ -22,6 +22,7 @@ A fast CLI tool that previews Markdown files in your browser with GitHub-styled 
 | **Live Reload Server** | Watch files and auto-refresh on changes |
 | **Respects `.gitignore`** | Automatically skips ignored files |
 | **Mobile Responsive** | Hamburger menu on smaller screens |
+| **Fuzzy Search** | Quick file search with `Cmd/Ctrl+K` |
 
 ---
 
@@ -120,9 +121,19 @@ mdp --serve --port 3000 ./docs/    # Start server on port 3000
 
 | Shortcut | Action |
 |----------|--------|
+| <kbd>Cmd/Ctrl</kbd> + <kbd>K</kbd> | Open fuzzy search palette |
 | <kbd>Cmd</kbd> + <kbd>B</kbd> (Mac) | Toggle sidebar |
 | <kbd>Ctrl</kbd> + <kbd>B</kbd> (Win/Linux) | Toggle sidebar |
-| <kbd>Escape</kbd> | Close sidebar (mobile) |
+| <kbd>Escape</kbd> | Close sidebar/search palette |
+
+### Search Palette Navigation
+
+| Shortcut | Action |
+|----------|--------|
+| <kbd>↑</kbd> / <kbd>↓</kbd> | Navigate results |
+| <kbd>Ctrl</kbd> + <kbd>P</kbd> / <kbd>N</kbd> | Navigate results (alternative) |
+| <kbd>Enter</kbd> | Open selected file |
+| <kbd>Escape</kbd> | Close palette |
 
 ---
 
