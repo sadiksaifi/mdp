@@ -257,7 +257,7 @@ body:has(.sidebar.collapsed) .content {
 .content {
     transition: margin-left var(--transition-speed) ease;
     flex: 1;
-    margin-left: var(--sidebar-width);
+    margin-left: auto;
     margin-right: auto;
     padding: var(--content-padding);
     max-width: 980px;
