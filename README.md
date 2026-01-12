@@ -2,6 +2,8 @@
 
 A fast CLI tool that previews Markdown files in your browser with GitHub-styled rendering.
 
+<img width="1512" height="949" alt="Screenshot 2026-01-12 at 14 12 06" src="https://github.com/user-attachments/assets/7e8652d1-1387-4873-bfe3-6f0749f6ae47" />
+
 ## Features
 
 - GitHub Flavored Markdown (GFM) support
@@ -9,6 +11,11 @@ A fast CLI tool that previews Markdown files in your browser with GitHub-styled 
 - Syntax highlighting for code blocks
 - Tables, task lists, strikethrough, and autolinks
 - Cross-platform: macOS, Linux, and Windows
+- **Multi-file support** with sidebar navigation
+- **Directory support** - preview all markdown files in a directory
+- Respects `.gitignore` files (including nested) when scanning directories
+- Collapsible sidebar with keyboard shortcut (Cmd+B / Ctrl+B)
+- Mobile responsive design with hamburger menu
 
 ## Installation
 
@@ -36,19 +43,39 @@ make build
 ## Usage
 
 ```bash
-mdp <markdown-file.md>
+mdp <file.md>                    # Preview single file
+mdp <file1.md> <file2.md>        # Preview multiple files with sidebar
+mdp <directory>                  # Preview all .md files in directory
 ```
 
-Example:
+### Examples
 
+**Single file:**
 ```bash
 mdp README.md
 ```
 
-This will:
-1. Convert the Markdown to styled HTML
-2. Save it to `/tmp/mdpreview-README.html`
-3. Open it in your default browser
+**Multiple files:**
+```bash
+mdp README.md CHANGELOG.md docs/guide.md
+```
+
+**Entire directory:**
+```bash
+mdp ./docs/
+```
+
+### Output
+
+- **Single file**: Opens `/tmp/mdpreview-{filename}.html` in your default browser
+- **Multiple files/directory**: Opens `/tmp/mdpreview-multi.html` with a sidebar for navigation
+
+### Keyboard Shortcuts (Multi-file mode)
+
+| Shortcut | Action |
+|----------|--------|
+| `Cmd+B` (Mac) / `Ctrl+B` (Win/Linux) | Toggle sidebar |
+| `Escape` | Close sidebar (mobile) |
 
 ## Development
 
@@ -58,7 +85,8 @@ This will:
 cmd/mdp/              # CLI entry point
 internal/
   converter/          # Markdown to HTML conversion
-  template/           # HTML document generation
+  template/           # HTML document generation (single & multi-file)
+  filetree/           # File tree data structure for sidebar
   browser/            # Platform-specific browser opening
 assets/               # CSS assets
 ```

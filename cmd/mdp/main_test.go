@@ -31,18 +31,16 @@ func TestRun_VersionFlag(t *testing.T) {
 	}
 }
 
-func TestRun_TooManyArgs(t *testing.T) {
-	err := run([]string{"file1.md", "file2.md"})
-	if err == nil {
-		t.Error("expected error for too many arguments")
-	}
-	if !strings.Contains(err.Error(), "Usage") {
-		t.Errorf("expected usage message, got: %v", err)
-	}
-}
-
 func TestRun_InvalidExtension(t *testing.T) {
-	err := run([]string{"file.txt"})
+	// Create a temp file with wrong extension
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "file.txt")
+	err := os.WriteFile(tmpFile, []byte("test"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+
+	err = run([]string{tmpFile})
 	if err == nil {
 		t.Error("expected error for invalid extension")
 	}
@@ -56,8 +54,8 @@ func TestRun_NonexistentFile(t *testing.T) {
 	if err == nil {
 		t.Error("expected error for nonexistent file")
 	}
-	if !strings.Contains(err.Error(), "reading file") {
-		t.Errorf("expected file reading error, got: %v", err)
+	if !strings.Contains(err.Error(), "Error accessing") {
+		t.Errorf("expected file access error, got: %v", err)
 	}
 }
 
@@ -128,5 +126,208 @@ func TestRun_CaseInsensitiveExtension(t *testing.T) {
 	err = run([]string{tmpFile})
 	if err != nil {
 		t.Errorf("run() should accept .MD extension, got error: %v", err)
+	}
+}
+
+func TestRun_MultipleFiles(t *testing.T) {
+	// Skip browser opening in tests
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping integration test in CI environment")
+	}
+
+	tmpDir := t.TempDir()
+
+	// Create multiple test files
+	files := []string{"one.md", "two.md", "three.md"}
+	var paths []string
+	for _, f := range files {
+		path := filepath.Join(tmpDir, f)
+		content := "# " + f + "\n\nContent for " + f
+		err := os.WriteFile(path, []byte(content), 0644)
+		if err != nil {
+			t.Fatalf("failed to create temp file: %v", err)
+		}
+		paths = append(paths, path)
+	}
+
+	err := run(paths)
+	if err != nil {
+		t.Errorf("run() with multiple files failed: %v", err)
+	}
+
+	// Verify output file was created
+	outputPath := filepath.Join("/tmp", "mdpreview-multi.html")
+	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
+		t.Error("expected output file to be created")
+	}
+
+	// Verify output content contains sidebar elements
+	outputContent, err := os.ReadFile(outputPath)
+	if err != nil {
+		t.Fatalf("failed to read output file: %v", err)
+	}
+
+	checks := []string{
+		"<!DOCTYPE html>",
+		"sidebar",
+		"sidebar-open-btn",
+		"file-tree",
+		"one",
+		"two",
+		"three",
+		"content-section",
+	}
+
+	for _, check := range checks {
+		if !strings.Contains(string(outputContent), check) {
+			t.Errorf("expected output to contain %q", check)
+		}
+	}
+}
+
+func TestRun_Directory(t *testing.T) {
+	// Skip browser opening in tests
+	if os.Getenv("CI") != "" {
+		t.Skip("Skipping integration test in CI environment")
+	}
+
+	tmpDir := t.TempDir()
+
+	// Create nested structure
+	subDir := filepath.Join(tmpDir, "docs")
+	err := os.MkdirAll(subDir, 0755)
+	if err != nil {
+		t.Fatalf("failed to create subdir: %v", err)
+	}
+
+	// Create files
+	err = os.WriteFile(filepath.Join(tmpDir, "README.md"), []byte("# Root"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+	err = os.WriteFile(filepath.Join(subDir, "guide.md"), []byte("# Guide"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+
+	err = run([]string{tmpDir})
+	if err != nil {
+		t.Errorf("run() with directory failed: %v", err)
+	}
+
+	// Verify output content contains both files
+	outputPath := filepath.Join("/tmp", "mdpreview-multi.html")
+	outputContent, err := os.ReadFile(outputPath)
+	if err != nil {
+		t.Fatalf("failed to read output file: %v", err)
+	}
+
+	checks := []string{
+		"README",
+		"guide",
+		"docs",
+	}
+
+	for _, check := range checks {
+		if !strings.Contains(string(outputContent), check) {
+			t.Errorf("expected output to contain %q", check)
+		}
+	}
+}
+
+func TestRun_EmptyDirectory(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	err := run([]string{tmpDir})
+	if err == nil {
+		t.Error("expected error for empty directory")
+	}
+	if !strings.Contains(err.Error(), "No markdown files") {
+		t.Errorf("expected 'no markdown files' error, got: %v", err)
+	}
+}
+
+func TestResolveFiles_SingleFile(t *testing.T) {
+	tmpDir := t.TempDir()
+	tmpFile := filepath.Join(tmpDir, "test.md")
+	err := os.WriteFile(tmpFile, []byte("# Test"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+
+	files, err := resolveFiles([]string{tmpFile})
+	if err != nil {
+		t.Fatalf("resolveFiles failed: %v", err)
+	}
+
+	if len(files) != 1 {
+		t.Errorf("expected 1 file, got %d", len(files))
+	}
+}
+
+func TestResolveFiles_Directory(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create nested structure
+	subDir := filepath.Join(tmpDir, "sub")
+	err := os.MkdirAll(subDir, 0755)
+	if err != nil {
+		t.Fatalf("failed to create subdir: %v", err)
+	}
+
+	err = os.WriteFile(filepath.Join(tmpDir, "a.md"), []byte("# A"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+	err = os.WriteFile(filepath.Join(subDir, "b.md"), []byte("# B"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+
+	files, err := resolveFiles([]string{tmpDir})
+	if err != nil {
+		t.Fatalf("resolveFiles failed: %v", err)
+	}
+
+	if len(files) != 2 {
+		t.Errorf("expected 2 files, got %d", len(files))
+	}
+}
+
+func TestSanitizeID(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{"README.md", "readme-md"},
+		{"docs/guide.md", "docs-guide-md"},
+		{"path with spaces/file.md", "path-with-spaces-file-md"},
+		{"test", "test"},
+	}
+
+	for _, tc := range tests {
+		result := sanitizeID(tc.input)
+		if result != tc.expected {
+			t.Errorf("sanitizeID(%q) = %q, want %q", tc.input, result, tc.expected)
+		}
+	}
+}
+
+func TestFindCommonBase(t *testing.T) {
+	tests := []struct {
+		paths    []string
+		expected string
+	}{
+		{[]string{"/a/b/c.md"}, "/a/b"},
+		{[]string{"/a/b/c.md", "/a/b/d.md"}, "/a/b"},
+		{[]string{"/a/b/c.md", "/a/d/e.md"}, "/a"},
+		{[]string{}, ""},
+	}
+
+	for _, tc := range tests {
+		result := findCommonBase(tc.paths)
+		if result != tc.expected {
+			t.Errorf("findCommonBase(%v) = %q, want %q", tc.paths, result, tc.expected)
+		}
 	}
 }
