@@ -97,16 +97,16 @@ jobs:
           cat > homebrew-tap/Formula/mdp.rb << EOF
           class Mdp < Formula
             desc "A fast CLI tool that previews Markdown files in your browser with GitHub-styled rendering"
-            homepage "https://github.com/sadiksaifi/mdopen"
+            homepage "https://github.com/sadiksaifi/mdp"
             version "${VERSION_NUM}"
             license "MIT"
 
             on_macos do
               if Hardware::CPU.arm?
-                url "https://github.com/sadiksaifi/mdopen/releases/download/${VERSION}/mdp-darwin-arm64.tar.gz"
+                url "https://github.com/sadiksaifi/mdp/releases/download/${VERSION}/mdp-darwin-arm64.tar.gz"
                 sha256 "${SHA256_ARM64}"
               else
-                url "https://github.com/sadiksaifi/mdopen/releases/download/${VERSION}/mdp-darwin-amd64.tar.gz"
+                url "https://github.com/sadiksaifi/mdp/releases/download/${VERSION}/mdp-darwin-amd64.tar.gz"
                 sha256 "${SHA256_AMD64}"
               end
             end
