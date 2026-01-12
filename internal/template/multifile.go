@@ -90,6 +90,7 @@ body {
     display: flex;
     min-height: 100vh;
     color: var(--fg-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
 }
 
 .sidebar {
