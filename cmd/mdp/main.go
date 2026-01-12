@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/fs"
 	"os"
@@ -13,6 +14,7 @@ import (
 	"mdp/internal/browser"
 	"mdp/internal/converter"
 	"mdp/internal/filetree"
+	"mdp/internal/server"
 	"mdp/internal/template"
 )
 
@@ -26,6 +28,7 @@ func main() {
 }
 
 func run(args []string) error {
+	// Handle help and version before flag parsing
 	if len(args) == 1 {
 		switch args[0] {
 		case "-h", "--help":
@@ -37,11 +40,30 @@ func run(args []string) error {
 		}
 	}
 
-	if len(args) == 0 {
+	// Setup flags
+	fs := flag.NewFlagSet("mdp", flag.ContinueOnError)
+	fs.Usage = func() {} // Suppress default usage
+
+	serveFlag := fs.Bool("serve", false, "Start live reload server")
+	portFlag := fs.Int("port", 8080, "Port for live reload server (only with --serve)")
+
+	// Parse flags
+	if err := fs.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			printUsage()
+			return nil
+		}
+		return err
+	}
+
+	// Get remaining arguments (file paths)
+	fileArgs := fs.Args()
+
+	if len(fileArgs) == 0 {
 		return fmt.Errorf("Usage: mdp <markdown-file.md>\nRun 'mdp --help' for more information")
 	}
 
-	files, err := resolveFiles(args)
+	files, err := resolveFiles(fileArgs)
 	if err != nil {
 		return err
 	}
@@ -50,11 +72,27 @@ func run(args []string) error {
 		return fmt.Errorf("No markdown files found")
 	}
 
+	// Serve mode with live reload
+	if *serveFlag {
+		return runServe(files, *portFlag)
+	}
+
+	// Static mode (original behavior)
 	if len(files) == 1 {
 		return runSingleFile(files[0])
 	}
 
 	return runMultiFile(files)
+}
+
+// runServe starts the live reload server.
+func runServe(files []string, port int) error {
+	srv, err := server.New(port, files)
+	if err != nil {
+		return fmt.Errorf("failed to create server: %w", err)
+	}
+
+	return srv.Start()
 }
 
 // resolveFiles expands directories and validates all paths.
@@ -303,8 +341,14 @@ Usage:
   mdp -h, --help               Show this help message
   mdp -v, --version            Show version
 
+Options:
+  --serve                      Start live reload server instead of opening browser
+  --port <port>                Port for live reload server (default: 8080)
+
 Examples:
   mdp README.md                Preview single file
   mdp docs/                    Preview all markdown in docs/
-  mdp README.md CHANGELOG.md   Preview multiple files with sidebar`)
+  mdp README.md CHANGELOG.md   Preview multiple files with sidebar
+  mdp --serve README.md        Start live reload server for single file
+  mdp --serve --port 3000 .    Live reload all markdown in current directory`)
 }

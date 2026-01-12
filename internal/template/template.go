@@ -35,11 +35,35 @@ const htmlTemplate = `<!DOCTYPE html>
 <body>
     <article class="markdown-body">
         %s
-    </article>
+    </article>%s
 </body>
 </html>`
 
+const liveReloadScript = `
+    <script>
+        (function() {
+            var ws = new WebSocket('ws://localhost:%d/ws');
+            ws.onmessage = function(event) {
+                if (event.data === 'reload') {
+                    location.reload();
+                }
+            };
+            ws.onclose = function() {
+                console.log('Live reload disconnected. Attempting to reconnect...');
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
+            };
+        })();
+    </script>`
+
 // Generate creates a complete HTML document with the given title and content.
 func Generate(title, content string) string {
-	return fmt.Sprintf(htmlTemplate, title, githubMarkdownCSS, content)
+	return fmt.Sprintf(htmlTemplate, title, githubMarkdownCSS, content, "")
+}
+
+// GenerateWithLiveReload creates an HTML document with live reload support.
+func GenerateWithLiveReload(title, content string, port int) string {
+	script := fmt.Sprintf(liveReloadScript, port)
+	return fmt.Sprintf(htmlTemplate, title, githubMarkdownCSS, content, script)
 }
