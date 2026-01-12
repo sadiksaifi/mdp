@@ -22,23 +22,45 @@ const multiFileTemplate = `<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <button class="sidebar-open-btn" aria-label="Open sidebar" title="Open sidebar">
-		<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-layout-sidebar-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" /><path d="M15 4l0 16" /></svg>
-    </button>
+    <div class="floating-buttons">
+        <button class="sidebar-open-btn" aria-label="Open sidebar" title="Open sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" /><path d="M15 4l0 16" /></svg>
+        </button>
+        <span class="topbar-title">Preview</span>
+        <button class="search-open-btn" aria-label="Search files" title="Search files">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+        </button>
+    </div>
 
     <div class="sidebar-overlay"></div>
 
     <aside class="sidebar" role="navigation" aria-label="File navigation">
         <div class="sidebar-header">
             <h2>Files</h2>
-            <button class="sidebar-close-btn" aria-label="Close sidebar" title="Close sidebar">
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-layout-sidebar"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" /><path d="M9 4l0 16" /></svg>
-            </button>
+            <div class="sidebar-header-buttons">
+                <button class="sidebar-search-btn" aria-label="Search files" title="Search files">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+                </button>
+                <button class="sidebar-close-btn" aria-label="Close sidebar" title="Close sidebar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" /><path d="M9 4l0 16" /></svg>
+                </button>
+            </div>
         </div>
         <nav class="file-tree">
             %s
         </nav>
     </aside>
+
+    <div class="search-palette-overlay" id="search-overlay"></div>
+    <div class="search-palette" role="dialog" aria-label="File search" id="search-palette">
+        <input type="text" class="search-palette-input" id="search-input" placeholder="Search files..." autocomplete="off">
+        <ul class="search-palette-results" id="search-results"></ul>
+        <div class="search-palette-hint">
+            <span><kbd>↑↓</kbd> Navigate</span>
+            <span><kbd>Enter</kbd> Open</span>
+            <span><kbd>Esc</kbd> Close</span>
+        </div>
+    </div>
 
     <main class="content">
         %s
@@ -132,7 +154,13 @@ body {
     letter-spacing: 0.5px;
 }
 
-.sidebar-close-btn {
+.sidebar-header-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.sidebar-close-btn,
+.sidebar-search-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -145,17 +173,30 @@ body {
     transition: all 0.2s ease;
 }
 
-.sidebar-close-btn:hover {
+.sidebar-close-btn:hover,
+.sidebar-search-btn:hover {
     color: var(--fg-color);
     background: var(--sidebar-hover);
 }
 
-.sidebar-open-btn {
+.floating-buttons {
     position: fixed;
     top: 16px;
     left: 16px;
     z-index: 100;
     display: none;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.sidebar.collapsed ~ .floating-buttons,
+body:has(.sidebar.collapsed) .floating-buttons {
+    display: flex;
+}
+
+.sidebar-open-btn,
+.search-open-btn {
+    display: flex;
     align-items: center;
     justify-content: center;
     background: var(--sidebar-bg);
@@ -167,14 +208,14 @@ body {
     transition: all 0.2s ease;
 }
 
-.sidebar-open-btn:hover {
+.sidebar-open-btn:hover,
+.search-open-btn:hover {
     color: var(--fg-color);
     background: var(--sidebar-hover);
 }
 
-.sidebar.collapsed ~ .sidebar-open-btn,
-body:has(.sidebar.collapsed) .sidebar-open-btn {
-    display: flex;
+.topbar-title {
+    display: none;
 }
 
 .file-tree {
@@ -299,13 +340,41 @@ body:has(.sidebar.collapsed) .content {
         transform: translateX(-100%);
     }
 
-    .sidebar-open-btn {
+    .floating-buttons {
         display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        background: var(--sidebar-bg);
+        border-bottom: 1px solid var(--sidebar-border);
+        padding: 0 12px;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0;
+    }
+
+    .floating-buttons .sidebar-open-btn,
+    .floating-buttons .search-open-btn {
+        border: none;
+        background: transparent;
+    }
+
+    .sidebar-search-btn {
+        display: none;
+    }
+
+    .topbar-title {
+        display: block;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--fg-color);
     }
 
     .content {
         margin-left: 0;
-        padding: 70px 20px 20px;
+        padding: 72px 20px 20px;
     }
 
     .sidebar-overlay {
@@ -324,6 +393,130 @@ body:has(.sidebar.collapsed) .content {
         --content-padding: 30px;
     }
 }
+
+/* Search Palette */
+.search-palette-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 300;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.search-palette-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-palette {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.95);
+    width: 90%;
+    max-width: 500px;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    z-index: 400;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease, visibility 0.15s ease, transform 0.15s ease;
+}
+
+.search-palette.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) scale(1);
+}
+
+.search-palette-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-family: inherit;
+    border: none;
+    border-bottom: 1px solid var(--sidebar-border);
+    border-radius: 8px 8px 0 0;
+    background: transparent;
+    color: var(--fg-color);
+    outline: none;
+    box-sizing: border-box;
+}
+
+.search-palette-input::placeholder {
+    color: var(--fg-muted);
+}
+
+.search-palette-results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.search-palette-item {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 16px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 0.1s ease;
+}
+
+.search-palette-item:hover {
+    background: var(--sidebar-hover);
+}
+
+.search-palette-item.selected {
+    background: var(--sidebar-active-bg);
+    border-left-color: var(--sidebar-active);
+}
+
+.search-palette-item-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fg-color);
+}
+
+.search-palette-item.selected .search-palette-item-name {
+    color: var(--sidebar-active);
+}
+
+.search-palette-item-path {
+    font-size: 12px;
+    color: var(--fg-muted);
+    margin-top: 2px;
+}
+
+.search-palette-empty {
+    padding: 20px 16px;
+    text-align: center;
+    color: var(--fg-muted);
+    font-size: 14px;
+}
+
+.search-palette-hint {
+    padding: 8px 16px;
+    font-size: 11px;
+    color: var(--fg-muted);
+    border-top: 1px solid var(--sidebar-border);
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.search-palette-hint kbd {
+    background: var(--sidebar-hover);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 11px;
+}
 `
 
 const sidebarJS = `
@@ -333,6 +526,8 @@ const sidebarJS = `
     var sidebar = document.querySelector('.sidebar');
     var openBtn = document.querySelector('.sidebar-open-btn');
     var closeBtn = document.querySelector('.sidebar-close-btn');
+    var searchBtn = document.querySelector('.search-open-btn');
+    var sidebarSearchBtn = document.querySelector('.sidebar-search-btn');
     var overlay = document.querySelector('.sidebar-overlay');
     var fileLinks = document.querySelectorAll('.file-tree a[data-file]');
     var contentSections = document.querySelectorAll('.content-section');
@@ -405,26 +600,6 @@ const sidebarJS = `
         directories[i].addEventListener('click', toggleDirectory);
     }
 
-    document.addEventListener('keydown', function(e) {
-        // Escape to close sidebar on mobile
-        if (e.key === 'Escape') {
-            if (isMobile() && sidebar.classList.contains('open')) {
-                closeSidebar();
-            }
-        }
-        // Cmd+B (Mac) or Ctrl+B (Windows/Linux) to toggle sidebar on desktop
-        if (e.key === 'b' && (e.metaKey || e.ctrlKey)) {
-            if (!isMobile()) {
-                e.preventDefault();
-                if (sidebar.classList.contains('collapsed')) {
-                    openSidebar();
-                } else {
-                    closeSidebar();
-                }
-            }
-        }
-    });
-
     // Restore collapsed state from localStorage (desktop only)
     if (window.innerWidth > 768 && localStorage.getItem('mdp-sidebar-collapsed') === 'true') {
         sidebar.classList.add('collapsed');
@@ -433,8 +608,11 @@ const sidebarJS = `
     // Set tooltip with keyboard shortcut based on platform
     var isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
     var shortcut = isMac ? '⌘B' : 'Ctrl+B';
+    var searchShortcut = isMac ? '⌘K' : 'Ctrl+K';
     openBtn.title = 'Open sidebar (' + shortcut + ')';
     closeBtn.title = 'Close sidebar (' + shortcut + ')';
+    searchBtn.title = 'Search files (' + searchShortcut + ')';
+    sidebarSearchBtn.title = 'Search files (' + searchShortcut + ')';
 
     // Initialize file display
     if (window.location.hash) {
@@ -454,6 +632,191 @@ const sidebarJS = `
     } else if (fileLinks.length > 0) {
         showFile(fileLinks[0].dataset.file);
     }
+
+    // Search Palette
+    var searchOverlay = document.getElementById('search-overlay');
+    var searchPalette = document.getElementById('search-palette');
+    var searchInput = document.getElementById('search-input');
+    var searchResults = document.getElementById('search-results');
+    var paletteOpen = false;
+    var selectedIndex = 0;
+    var filteredFiles = [];
+
+    // Build file list from DOM
+    var allFiles = [];
+    for (var i = 0; i < fileLinks.length; i++) {
+        var link = fileLinks[i];
+        var name = link.textContent;
+        var id = link.dataset.file;
+        // Get path from parent directory structure
+        var path = '';
+        var li = link.parentElement;
+        var parent = li.parentElement;
+        while (parent && parent.classList.contains('directory') === false) {
+            parent = parent.parentElement;
+        }
+        if (parent && parent.classList.contains('directory')) {
+            var dirSpan = parent.querySelector(':scope > span');
+            if (dirSpan) {
+                path = dirSpan.textContent + '/';
+            }
+        }
+        allFiles.push({ id: id, name: name, path: path + name });
+    }
+
+    function fuzzyMatch(query, text) {
+        query = query.toLowerCase();
+        text = text.toLowerCase();
+        var qi = 0;
+        for (var ti = 0; ti < text.length && qi < query.length; ti++) {
+            if (text[ti] === query[qi]) qi++;
+        }
+        return qi === query.length;
+    }
+
+    function renderResults() {
+        searchResults.innerHTML = '';
+        if (filteredFiles.length === 0) {
+            searchResults.innerHTML = '<li class="search-palette-empty">No files found</li>';
+            return;
+        }
+        for (var i = 0; i < filteredFiles.length; i++) {
+            var file = filteredFiles[i];
+            var li = document.createElement('li');
+            li.className = 'search-palette-item' + (i === selectedIndex ? ' selected' : '');
+            li.dataset.index = i;
+            li.innerHTML = '<span class="search-palette-item-name">' + file.name + '</span>' +
+                           '<span class="search-palette-item-path">' + file.path + '</span>';
+            searchResults.appendChild(li);
+        }
+    }
+
+    function filterFiles(query) {
+        if (!query) {
+            filteredFiles = allFiles.slice();
+        } else {
+            filteredFiles = [];
+            for (var i = 0; i < allFiles.length; i++) {
+                if (fuzzyMatch(query, allFiles[i].path)) {
+                    filteredFiles.push(allFiles[i]);
+                }
+            }
+        }
+        selectedIndex = 0;
+        renderResults();
+    }
+
+    function openSearchPalette() {
+        paletteOpen = true;
+        searchOverlay.classList.add('active');
+        searchPalette.classList.add('active');
+        searchInput.value = '';
+        filterFiles('');
+        // Use setTimeout to ensure focus happens after visibility transition
+        setTimeout(function() {
+            searchInput.focus();
+        }, 10);
+    }
+
+    function closeSearchPalette() {
+        paletteOpen = false;
+        searchOverlay.classList.remove('active');
+        searchPalette.classList.remove('active');
+        searchInput.value = '';
+    }
+
+    function selectCurrentFile() {
+        if (filteredFiles.length > 0 && filteredFiles[selectedIndex]) {
+            showFile(filteredFiles[selectedIndex].id);
+            closeSearchPalette();
+        }
+    }
+
+    function moveSelection(dir) {
+        if (filteredFiles.length === 0) return;
+        selectedIndex += dir;
+        if (selectedIndex < 0) selectedIndex = filteredFiles.length - 1;
+        if (selectedIndex >= filteredFiles.length) selectedIndex = 0;
+        renderResults();
+        // Scroll selected item into view
+        var selected = searchResults.querySelector('.selected');
+        if (selected) {
+            selected.scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    searchInput.addEventListener('input', function() {
+        filterFiles(this.value);
+    });
+
+    searchResults.addEventListener('click', function(e) {
+        var item = e.target.closest('.search-palette-item');
+        if (item) {
+            selectedIndex = parseInt(item.dataset.index, 10);
+            selectCurrentFile();
+        }
+    });
+
+    searchOverlay.addEventListener('click', closeSearchPalette);
+    searchBtn.addEventListener('click', openSearchPalette);
+    sidebarSearchBtn.addEventListener('click', openSearchPalette);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Cmd+K or Ctrl+K to open search palette
+        if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+            e.preventDefault();
+            if (paletteOpen) {
+                closeSearchPalette();
+            } else {
+                openSearchPalette();
+            }
+            return;
+        }
+
+        // When palette is open
+        if (paletteOpen) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeSearchPalette();
+                return;
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                selectCurrentFile();
+                return;
+            }
+            if (e.key === 'ArrowDown' || (e.key === 'n' && (e.metaKey || e.ctrlKey))) {
+                e.preventDefault();
+                moveSelection(1);
+                return;
+            }
+            if (e.key === 'ArrowUp' || (e.key === 'p' && (e.metaKey || e.ctrlKey))) {
+                e.preventDefault();
+                moveSelection(-1);
+                return;
+            }
+            return;
+        }
+
+        // Escape to close sidebar on mobile
+        if (e.key === 'Escape') {
+            if (isMobile() && sidebar.classList.contains('open')) {
+                closeSidebar();
+            }
+        }
+        // Cmd+B (Mac) or Ctrl+B (Windows/Linux) to toggle sidebar on desktop
+        if (e.key === 'b' && (e.metaKey || e.ctrlKey)) {
+            if (!isMobile()) {
+                e.preventDefault();
+                if (sidebar.classList.contains('collapsed')) {
+                    openSidebar();
+                } else {
+                    closeSidebar();
+                }
+            }
+        }
+    });
 })();
 `
 
