@@ -13,6 +13,7 @@ A fast CLI tool that previews Markdown files in your browser with GitHub-styled 
 - Cross-platform: macOS, Linux, and Windows
 - **Multi-file support** with sidebar navigation
 - **Directory support** - preview all markdown files in a directory
+- **Live reload server** - watch files and auto-refresh on changes
 - Respects `.gitignore` files (including nested) when scanning directories
 - Collapsible sidebar with keyboard shortcut (Cmd+B / Ctrl+B)
 - Mobile responsive design with hamburger menu
@@ -46,7 +47,18 @@ make build
 mdp <file.md>                    # Preview single file
 mdp <file1.md> <file2.md>        # Preview multiple files with sidebar
 mdp <directory>                  # Preview all .md files in directory
+mdp --serve <file.md>            # Start live reload server
+mdp --serve --port 3000 <dir>    # Live reload on custom port
 ```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `--serve` | Start live reload server instead of opening browser |
+| `--port <port>` | Port for live reload server (default: 8080) |
+| `-h, --help` | Show help message |
+| `-v, --version` | Show version |
 
 ### Examples
 
@@ -65,10 +77,17 @@ mdp README.md CHANGELOG.md docs/guide.md
 mdp ./docs/
 ```
 
+**Live reload server:**
+```bash
+mdp --serve README.md              # Start server on port 8080
+mdp --serve --port 3000 ./docs/    # Start server on port 3000
+```
+
 ### Output
 
 - **Single file**: Opens `/tmp/mdpreview-{filename}.html` in your default browser
 - **Multiple files/directory**: Opens `/tmp/mdpreview-multi.html` with a sidebar for navigation
+- **Live reload mode**: Starts HTTP server at `http://localhost:<port>` with WebSocket-based auto-refresh
 
 ### Keyboard Shortcuts (Multi-file mode)
 
@@ -88,6 +107,7 @@ internal/
   template/           # HTML document generation (single & multi-file)
   filetree/           # File tree data structure for sidebar
   browser/            # Platform-specific browser opening
+  server/             # Live reload HTTP server with WebSocket
 assets/               # CSS assets
 ```
 

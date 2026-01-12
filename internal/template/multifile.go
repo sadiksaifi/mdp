@@ -47,6 +47,7 @@ const multiFileTemplate = `<!DOCTYPE html>
     <script>
         %s
     </script>
+    %s
 </body>
 </html>`
 
@@ -456,6 +457,24 @@ const sidebarJS = `
 })();
 `
 
+const multiFileLiveReloadScript = `
+    <script>
+        (function() {
+            var ws = new WebSocket('ws://localhost:%d/ws');
+            ws.onmessage = function(event) {
+                if (event.data === 'reload') {
+                    location.reload();
+                }
+            };
+            ws.onclose = function() {
+                console.log('Live reload disconnected. Attempting to reconnect...');
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);
+            };
+        })();
+    </script>`
+
 // GenerateMulti creates an HTML document with sidebar navigation for multiple files.
 func GenerateMulti(title string, tree *filetree.TreeNode, files []filetree.FileEntry) string {
 	sidebarHTML := generateSidebarHTML(tree)
@@ -468,6 +487,24 @@ func GenerateMulti(title string, tree *filetree.TreeNode, files []filetree.FileE
 		sidebarHTML,
 		contentHTML,
 		sidebarJS,
+		"", // No live reload script
+	)
+}
+
+// GenerateMultiWithLiveReload creates an HTML document with sidebar navigation and live reload.
+func GenerateMultiWithLiveReload(title string, tree *filetree.TreeNode, files []filetree.FileEntry, port int) string {
+	sidebarHTML := generateSidebarHTML(tree)
+	contentHTML := generateContentSections(files)
+	liveReloadScript := fmt.Sprintf(multiFileLiveReloadScript, port)
+
+	return fmt.Sprintf(multiFileTemplate,
+		html.EscapeString(title),
+		githubMarkdownCSS,
+		sidebarCSS,
+		sidebarHTML,
+		contentHTML,
+		sidebarJS,
+		liveReloadScript,
 	)
 }
 
