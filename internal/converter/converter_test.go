@@ -41,7 +41,7 @@ func TestConvert_BasicMarkdown(t *testing.T) {
 		{
 			name:     "code block",
 			input:    "```go\nfmt.Println(\"hello\")\n```",
-			contains: "<pre><code",
+			contains: "<pre",
 		},
 		{
 			name:     "inline code",
@@ -144,5 +144,94 @@ func TestConvert_EmptyInput(t *testing.T) {
 
 	if result != "" {
 		t.Errorf("expected empty output for empty input, got: %s", result)
+	}
+}
+
+func TestConvert_SyntaxHighlighting(t *testing.T) {
+	conv := New()
+
+	tests := []struct {
+		name     string
+		input    string
+		contains []string
+	}{
+		{
+			name:  "go code block has highlighting spans",
+			input: "```go\nfunc main() {\n\tfmt.Println(\"hello\")\n}\n```",
+			contains: []string{
+				"hl-kd", // keyword declaration (func)
+				"hl-nf", // function name (main, Println)
+				"hl-s",  // string
+			},
+		},
+		{
+			name:  "python code block has highlighting spans",
+			input: "```python\ndef hello():\n    print(\"world\")\n```",
+			contains: []string{
+				"hl-k",  // keyword (def)
+				"hl-nf", // function name
+				"hl-s",  // string
+			},
+		},
+		{
+			name:  "javascript code block has highlighting spans",
+			input: "```javascript\nconst x = 42;\nconsole.log(x);\n```",
+			contains: []string{
+				"hl-kr", // keyword reserved (const)
+				"hl-mi", // integer
+			},
+		},
+		{
+			name:  "bash code block has highlighting spans",
+			input: "```bash\necho \"hello world\"\n```",
+			contains: []string{
+				"hl-nb", // builtin (echo)
+				"hl-s",  // string
+			},
+		},
+		{
+			name:     "code block without language still renders",
+			input:    "```\nplain code\n```",
+			contains: []string{"<pre>", "<code>"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := conv.Convert([]byte(tt.input))
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			for _, want := range tt.contains {
+				if !strings.Contains(result, want) {
+					t.Errorf("expected output to contain %q, got: %s", want, result)
+				}
+			}
+		})
+	}
+}
+
+func TestConvert_SupportedLanguages(t *testing.T) {
+	conv := New()
+
+	// Test that common languages are recognized and produce highlighting
+	languages := []string{
+		"go", "python", "javascript", "typescript",
+		"bash", "sh", "json", "yaml", "html", "css",
+		"rust", "java", "c", "cpp", "ruby", "sql",
+	}
+
+	for _, lang := range languages {
+		t.Run(lang, func(t *testing.T) {
+			input := "```" + lang + "\ncode here\n```"
+			result, err := conv.Convert([]byte(input))
+			if err != nil {
+				t.Fatalf("unexpected error for %s: %v", lang, err)
+			}
+			// Should contain chroma wrapper class
+			if !strings.Contains(result, "hl-chroma") {
+				t.Errorf("expected %s code block to have chroma wrapper, got: %s", lang, result)
+			}
+		})
 	}
 }

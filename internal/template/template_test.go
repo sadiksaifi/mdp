@@ -77,3 +77,20 @@ func TestGenerate_ResponsiveLayout(t *testing.T) {
 		t.Error("expected centered layout in output")
 	}
 }
+
+func TestGenerate_ContainsChromaCSS(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	// Check for chroma syntax highlighting class styling
+	if !strings.Contains(result, ".hl-k") {
+		t.Error("expected Chroma keyword class styling in output")
+	}
+
+	if !strings.Contains(result, ".hl-s") {
+		t.Error("expected Chroma string class styling in output")
+	}
+
+	if !strings.Contains(result, "color-prettylights-syntax") {
+		t.Error("expected CSS to reference PrettyLights variables for theming")
+	}
+}

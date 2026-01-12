@@ -3,10 +3,12 @@ package converter
 import (
 	"strings"
 
+	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
+	highlighting "github.com/yuin/goldmark-highlighting/v2"
 )
 
 // Converter handles markdown to HTML conversion.
@@ -14,10 +16,18 @@ type Converter struct {
 	md goldmark.Markdown
 }
 
-// New creates a new Converter with GFM support.
+// New creates a new Converter with GFM support and syntax highlighting.
 func New() *Converter {
 	md := goldmark.New(
-		goldmark.WithExtensions(extension.GFM),
+		goldmark.WithExtensions(
+			extension.GFM,
+			highlighting.NewHighlighting(
+				highlighting.WithFormatOptions(
+					chromahtml.WithClasses(true),
+					chromahtml.ClassPrefix("hl-"),
+				),
+			),
+		),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
 		),

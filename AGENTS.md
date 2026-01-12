@@ -28,10 +28,11 @@ mdp is a CLI tool that converts Markdown files to styled HTML and opens them in 
 ```
 cmd/mdp/              # Entry point, CLI argument parsing, file discovery
 internal/
-  converter/          # Markdown to HTML conversion (goldmark)
-  template/           # HTML document generation with embedded CSS
+  converter/          # Markdown to HTML conversion (goldmark + chroma)
+  template/           # HTML document generation with embedded CSS/JS
     template.go       # Single-file HTML template
     multifile.go      # Multi-file HTML template with sidebar CSS/JS
+    chroma.css        # Syntax highlighting styles (Chroma to GitHub CSS mapping)
   filetree/           # File tree data structure for sidebar navigation
   browser/            # Platform-specific browser opening
   server/             # Live reload HTTP server with WebSocket support
@@ -47,6 +48,9 @@ assets/               # Original CSS file (also embedded in template package)
 **Key implementation details**:
 - CSS and JS are embedded into the binary using `//go:embed` in `internal/template/`
 - goldmark is configured with GFM extension, auto heading IDs, and unsafe HTML rendering
+- Syntax highlighting uses goldmark-highlighting with Chroma (200+ languages supported)
+- Chroma classes are mapped to GitHub's PrettyLights CSS variables for consistent theming
+- Code blocks have a copy button (appears on hover) for easy clipboard copying
 - Single file output: `/tmp/mdpreview-{filename}.html`
 - Multi-file output: `/tmp/mdpreview-multi.html`
 - Live reload uses WebSocket for instant browser refresh on file changes

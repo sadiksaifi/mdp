@@ -20,6 +20,9 @@ const multiFileTemplate = `<!DOCTYPE html>
     <style>
         %s
     </style>
+    <style>
+        %s
+    </style>
 </head>
 <body>
     <div class="floating-buttons">
@@ -836,6 +839,36 @@ const sidebarJS = `
             }
         }
     });
+
+    // Copy button for code blocks
+    var copyIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+    var checkIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+    document.querySelectorAll('.markdown-body pre').forEach(function(pre) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'code-block-wrapper';
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+
+        var btn = document.createElement('button');
+        btn.className = 'code-copy-btn';
+        btn.innerHTML = copyIcon;
+        btn.title = 'Copy code';
+        wrapper.appendChild(btn);
+
+        btn.addEventListener('click', function() {
+            var code = pre.querySelector('code');
+            var text = code ? code.textContent : pre.textContent;
+            navigator.clipboard.writeText(text).then(function() {
+                btn.innerHTML = checkIcon;
+                btn.classList.add('copied');
+                setTimeout(function() {
+                    btn.innerHTML = copyIcon;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        });
+    });
 })();
 `
 
@@ -865,6 +898,7 @@ func GenerateMulti(title string, tree *filetree.TreeNode, files []filetree.FileE
 	return fmt.Sprintf(multiFileTemplate,
 		html.EscapeString(title),
 		githubMarkdownCSS,
+		chromaCSS,
 		sidebarCSS,
 		sidebarHTML,
 		contentHTML,
@@ -882,6 +916,7 @@ func GenerateMultiWithLiveReload(title string, tree *filetree.TreeNode, files []
 	return fmt.Sprintf(multiFileTemplate,
 		html.EscapeString(title),
 		githubMarkdownCSS,
+		chromaCSS,
 		sidebarCSS,
 		sidebarHTML,
 		contentHTML,

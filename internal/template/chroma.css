@@ -1,0 +1,263 @@
+/* Chroma syntax highlighting classes mapped to GitHub PrettyLights CSS variables */
+
+/* Wrapper for code blocks */
+.markdown-body .hl-chroma {
+    background-color: var(--bgColor-muted, #f6f8fa);
+    border-radius: 6px;
+}
+
+/* Error */
+.markdown-body .hl-err {
+    color: var(--fgColor-danger, #cf222e);
+}
+
+/* Line table */
+.markdown-body .hl-lntd {
+    vertical-align: top;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+.markdown-body .hl-lntable {
+    border-spacing: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    width: auto;
+    overflow: auto;
+    display: block;
+}
+
+/* Line numbers */
+.markdown-body .hl-ln {
+    white-space: pre;
+    user-select: none;
+    margin-right: 0.4em;
+    padding: 0 0.4em 0 0.4em;
+    color: var(--fgColor-muted, #656d76);
+}
+
+/* Comments */
+.markdown-body .hl-c,
+.markdown-body .hl-ch,
+.markdown-body .hl-cm,
+.markdown-body .hl-c1,
+.markdown-body .hl-cs,
+.markdown-body .hl-cp,
+.markdown-body .hl-cpf {
+    color: var(--color-prettylights-syntax-comment, #6e7781);
+}
+
+/* Keywords */
+.markdown-body .hl-k,
+.markdown-body .hl-kc,
+.markdown-body .hl-kd,
+.markdown-body .hl-kn,
+.markdown-body .hl-kp,
+.markdown-body .hl-kr,
+.markdown-body .hl-kt {
+    color: var(--color-prettylights-syntax-keyword, #cf222e);
+}
+
+/* Strings */
+.markdown-body .hl-s,
+.markdown-body .hl-sa,
+.markdown-body .hl-sb,
+.markdown-body .hl-sc,
+.markdown-body .hl-dl,
+.markdown-body .hl-sd,
+.markdown-body .hl-s2,
+.markdown-body .hl-se,
+.markdown-body .hl-sh,
+.markdown-body .hl-si,
+.markdown-body .hl-sx,
+.markdown-body .hl-sr,
+.markdown-body .hl-s1,
+.markdown-body .hl-ss {
+    color: var(--color-prettylights-syntax-string, #0a3069);
+}
+
+/* Numbers and constants */
+.markdown-body .hl-m,
+.markdown-body .hl-mb,
+.markdown-body .hl-mf,
+.markdown-body .hl-mh,
+.markdown-body .hl-mi,
+.markdown-body .hl-il,
+.markdown-body .hl-mo {
+    color: var(--color-prettylights-syntax-constant, #0550ae);
+}
+
+/* Operators */
+.markdown-body .hl-o,
+.markdown-body .hl-ow {
+    color: var(--color-prettylights-syntax-keyword, #cf222e);
+}
+
+/* Names */
+.markdown-body .hl-n {
+    color: var(--fgColor-default, #1f2328);
+}
+
+/* Name.Attribute */
+.markdown-body .hl-na {
+    color: var(--color-prettylights-syntax-constant, #0550ae);
+}
+
+/* Name.Builtin */
+.markdown-body .hl-nb {
+    color: var(--color-prettylights-syntax-variable, #953800);
+}
+
+/* Name.Class */
+.markdown-body .hl-nc {
+    color: var(--color-prettylights-syntax-entity, #8250df);
+}
+
+/* Name.Constant */
+.markdown-body .hl-no {
+    color: var(--color-prettylights-syntax-constant, #0550ae);
+}
+
+/* Name.Decorator */
+.markdown-body .hl-nd {
+    color: var(--color-prettylights-syntax-entity, #8250df);
+}
+
+/* Name.Entity */
+.markdown-body .hl-ni {
+    color: var(--color-prettylights-syntax-constant, #0550ae);
+}
+
+/* Name.Exception */
+.markdown-body .hl-ne {
+    color: var(--color-prettylights-syntax-entity, #8250df);
+}
+
+/* Name.Function */
+.markdown-body .hl-nf,
+.markdown-body .hl-fm {
+    color: var(--color-prettylights-syntax-entity, #8250df);
+}
+
+/* Name.Label */
+.markdown-body .hl-nl {
+    color: var(--color-prettylights-syntax-constant, #0550ae);
+}
+
+/* Name.Namespace */
+.markdown-body .hl-nn {
+    color: var(--color-prettylights-syntax-variable, #953800);
+}
+
+/* Name.Tag */
+.markdown-body .hl-nt {
+    color: var(--color-prettylights-syntax-entity-tag, #116329);
+}
+
+/* Name.Variable */
+.markdown-body .hl-nv,
+.markdown-body .hl-vc,
+.markdown-body .hl-vg,
+.markdown-body .hl-vi,
+.markdown-body .hl-vm {
+    color: var(--color-prettylights-syntax-constant, #0550ae);
+}
+
+/* Name.Other */
+.markdown-body .hl-nx {
+    color: var(--fgColor-default, #1f2328);
+}
+
+/* Punctuation */
+.markdown-body .hl-p {
+    color: var(--fgColor-default, #1f2328);
+}
+
+/* Generic */
+.markdown-body .hl-gd {
+    color: var(--color-prettylights-syntax-markup-deleted-text, #82071e);
+    background-color: var(--color-prettylights-syntax-markup-deleted-bg, #ffebe9);
+}
+
+.markdown-body .hl-ge {
+    font-style: italic;
+}
+
+.markdown-body .hl-gi {
+    color: var(--color-prettylights-syntax-markup-inserted-text, #116329);
+    background-color: var(--color-prettylights-syntax-markup-inserted-bg, #dafbe1);
+}
+
+.markdown-body .hl-gs {
+    font-weight: bold;
+}
+
+.markdown-body .hl-gu {
+    color: var(--color-prettylights-syntax-markup-heading, #0550ae);
+    font-weight: bold;
+}
+
+/* Text/Whitespace */
+.markdown-body .hl-w {
+    color: var(--fgColor-muted, #656d76);
+}
+
+/* Code block copy button */
+.markdown-body .code-block-wrapper {
+    position: relative;
+}
+
+.markdown-body .code-copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 6px;
+    background: var(--bgColor-default, #ffffff);
+    color: var(--fgColor-muted, #656d76);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s ease, background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.markdown-body .code-block-wrapper:hover .code-copy-btn {
+    opacity: 1;
+}
+
+.markdown-body .code-copy-btn:hover {
+    background: var(--bgColor-muted, #f6f8fa);
+    color: var(--fgColor-default, #1f2328);
+}
+
+.markdown-body .code-copy-btn:active {
+    transform: scale(0.95);
+}
+
+.markdown-body .code-copy-btn.copied {
+    color: var(--fgColor-success, #1a7f37);
+}
+
+.markdown-body .code-copy-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+    .markdown-body .code-copy-btn {
+        background: var(--bgColor-default, #0d1117);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .markdown-body .code-copy-btn:hover {
+        background: var(--bgColor-muted, #161b22);
+    }
+}
