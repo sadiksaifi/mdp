@@ -12,10 +12,16 @@ A fast CLI tool that previews Markdown files in your browser with GitHub-styled 
 
 ## Installation
 
+### Homebrew (macOS)
+
+```bash
+brew install sadiksaifi/tap/mdp
+```
+
 ### From source
 
 ```bash
-git clone https://github.com/yourusername/mdp.git
+git clone https://github.com/sadiksaifi/mdp.git
 cd mdp
 make install
 ```
