@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,6 +13,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/websocket"
 
+	"mdp/internal/browser"
 	"mdp/internal/converter"
 	"mdp/internal/filetree"
 	"mdp/internal/template"
@@ -86,18 +88,55 @@ func (s *Server) Start() error {
 	// Start file watcher goroutine
 	go s.watchFiles()
 
-	// Setup HTTP handlers
-	http.HandleFunc("/", s.handleIndex)
-	http.HandleFunc("/ws", s.handleWebSocket)
+	// Setup HTTP handlers using a new ServeMux to avoid conflicts
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", s.handleIndex)
+	mux.HandleFunc("/ws", s.handleWebSocket)
 
-	addr := fmt.Sprintf(":%d", s.port)
+	// Try to find an available port
+	listener, err := s.findAvailablePort()
+	if err != nil {
+		return err
+	}
+
 	url := fmt.Sprintf("http://localhost:%d", s.port)
 
 	fmt.Printf("Starting live reload server at %s\n", url)
 	fmt.Printf("Watching %d file(s) for changes\n", len(s.files))
 	fmt.Println("Press Ctrl+C to stop")
 
-	return http.ListenAndServe(addr, nil)
+	// Open browser automatically
+	go func() {
+		if err := browser.Open(url); err != nil {
+			log.Printf("Warning: could not open browser: %v", err)
+		}
+	}()
+
+	return http.Serve(listener, mux)
+}
+
+// findAvailablePort tries to bind to the configured port, incrementing if occupied.
+func (s *Server) findAvailablePort() (net.Listener, error) {
+	maxPort := 65535
+	startPort := s.port
+
+	for port := startPort; port <= maxPort; port++ {
+		addr := fmt.Sprintf(":%d", port)
+		listener, err := net.Listen("tcp", addr)
+		if err == nil {
+			s.port = port // Update the port to the one we actually bound to
+			// Regenerate HTML with the correct port for WebSocket connection
+			if port != startPort {
+				if err := s.regenerateHTML(); err != nil {
+					listener.Close()
+					return nil, err
+				}
+			}
+			return listener, nil
+		}
+	}
+
+	return nil, fmt.Errorf("could not find available port starting from %d", startPort)
 }
 
 // Stop closes the server and cleans up resources.
