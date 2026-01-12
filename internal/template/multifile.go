@@ -734,10 +734,13 @@ const sidebarJS = `
         searchPalette.classList.add('active');
         searchInput.value = '';
         filterFiles('');
-        // Use setTimeout to ensure focus happens after visibility transition
-        setTimeout(function() {
-            searchInput.focus();
-        }, 10);
+        // Focus after element becomes visible
+        // Use double-rAF to ensure browser has painted, then focus
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                searchInput.focus();
+            });
+        });
     }
 
     function closeSearchPalette() {
