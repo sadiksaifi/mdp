@@ -130,6 +130,25 @@ body {
     overflow-y: auto;
     z-index: 200;
     transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease;
+    scrollbar-width: thin;
+    scrollbar-color: var(--sidebar-border) transparent;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: var(--sidebar-border);
+    border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--fg-muted);
 }
 
 .sidebar.collapsed {
