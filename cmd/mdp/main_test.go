@@ -331,3 +331,189 @@ func TestFindCommonBase(t *testing.T) {
 		}
 	}
 }
+
+func TestRun_OutputFlag_SingleFile(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create a markdown file
+	inputFile := filepath.Join(tmpDir, "test.md")
+	err := os.WriteFile(inputFile, []byte("# Test\n\nHello world"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create input file: %v", err)
+	}
+
+	// Specify custom output path
+	outputFile := filepath.Join(tmpDir, "output.html")
+
+	err = run([]string{"--output", outputFile, inputFile})
+	if err != nil {
+		t.Errorf("run() with --output flag failed: %v", err)
+	}
+
+	// Verify output file was created at specified path
+	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+		t.Error("expected output file to be created at specified path")
+	}
+
+	// Verify content
+	content, err := os.ReadFile(outputFile)
+	if err != nil {
+		t.Fatalf("failed to read output file: %v", err)
+	}
+
+	checks := []string{
+		"<!DOCTYPE html>",
+		"<title>test</title>",
+		"Hello world",
+	}
+
+	for _, check := range checks {
+		if !strings.Contains(string(content), check) {
+			t.Errorf("expected output to contain %q", check)
+		}
+	}
+}
+
+func TestRun_OutputFlag_Shorthand(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create a markdown file
+	inputFile := filepath.Join(tmpDir, "test.md")
+	err := os.WriteFile(inputFile, []byte("# Shorthand Test"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create input file: %v", err)
+	}
+
+	// Use -O shorthand
+	outputFile := filepath.Join(tmpDir, "shorthand-output.html")
+
+	err = run([]string{"-O", outputFile, inputFile})
+	if err != nil {
+		t.Errorf("run() with -O flag failed: %v", err)
+	}
+
+	// Verify output file was created
+	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+		t.Error("expected output file to be created with -O shorthand")
+	}
+}
+
+func TestRun_OutputFlag_MultipleFiles(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create multiple markdown files
+	file1 := filepath.Join(tmpDir, "one.md")
+	file2 := filepath.Join(tmpDir, "two.md")
+	err := os.WriteFile(file1, []byte("# One"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+	err = os.WriteFile(file2, []byte("# Two"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+
+	// Specify custom output path
+	outputFile := filepath.Join(tmpDir, "multi-output.html")
+
+	err = run([]string{"--output", outputFile, file1, file2})
+	if err != nil {
+		t.Errorf("run() with --output and multiple files failed: %v", err)
+	}
+
+	// Verify output file was created
+	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+		t.Error("expected output file to be created for multiple files")
+	}
+
+	// Verify content contains both files and sidebar
+	content, err := os.ReadFile(outputFile)
+	if err != nil {
+		t.Fatalf("failed to read output file: %v", err)
+	}
+
+	checks := []string{
+		"<!DOCTYPE html>",
+		"sidebar",
+		"One",
+		"Two",
+	}
+
+	for _, check := range checks {
+		if !strings.Contains(string(content), check) {
+			t.Errorf("expected output to contain %q", check)
+		}
+	}
+}
+
+func TestRun_OutputFlag_WithServe_MutualExclusion(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create a markdown file
+	inputFile := filepath.Join(tmpDir, "test.md")
+	err := os.WriteFile(inputFile, []byte("# Test"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create input file: %v", err)
+	}
+
+	outputFile := filepath.Join(tmpDir, "output.html")
+
+	// Using both --output and --serve should fail
+	err = run([]string{"--serve", "--output", outputFile, inputFile})
+	if err == nil {
+		t.Error("expected error when using --output with --serve")
+	}
+	if !strings.Contains(err.Error(), "cannot use --output with --serve") {
+		t.Errorf("expected mutual exclusion error, got: %v", err)
+	}
+}
+
+func TestRun_OutputFlag_Directory(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	// Create a subdirectory with markdown files
+	docsDir := filepath.Join(tmpDir, "docs")
+	err := os.MkdirAll(docsDir, 0755)
+	if err != nil {
+		t.Fatalf("failed to create docs dir: %v", err)
+	}
+
+	err = os.WriteFile(filepath.Join(docsDir, "readme.md"), []byte("# Readme"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+	err = os.WriteFile(filepath.Join(docsDir, "guide.md"), []byte("# Guide"), 0644)
+	if err != nil {
+		t.Fatalf("failed to create file: %v", err)
+	}
+
+	// Output to custom path
+	outputFile := filepath.Join(tmpDir, "docs-output.html")
+
+	err = run([]string{"-O", outputFile, docsDir})
+	if err != nil {
+		t.Errorf("run() with -O and directory failed: %v", err)
+	}
+
+	// Verify output
+	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
+		t.Error("expected output file to be created for directory")
+	}
+
+	content, err := os.ReadFile(outputFile)
+	if err != nil {
+		t.Fatalf("failed to read output file: %v", err)
+	}
+
+	checks := []string{
+		"Readme",
+		"Guide",
+		"sidebar",
+	}
+
+	for _, check := range checks {
+		if !strings.Contains(string(content), check) {
+			t.Errorf("expected output to contain %q", check)
+		}
+	}
+}

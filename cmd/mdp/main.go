@@ -46,6 +46,8 @@ func run(args []string) error {
 
 	serveFlag := fs.Bool("serve", false, "Start live reload server")
 	portFlag := fs.Int("port", 8080, "Port for live reload server (only with --serve)")
+	outputFlag := fs.String("output", "", "Write HTML to file instead of opening browser")
+	fs.StringVar(outputFlag, "O", "", "Write HTML to file instead of opening browser (shorthand)")
 
 	// Parse flags
 	if err := fs.Parse(args); err != nil {
@@ -72,6 +74,11 @@ func run(args []string) error {
 		return fmt.Errorf("No markdown files found")
 	}
 
+	// Validate flag combinations
+	if *outputFlag != "" && *serveFlag {
+		return fmt.Errorf("cannot use --output with --serve")
+	}
+
 	// Serve mode with live reload
 	if *serveFlag {
 		return runServe(files, *portFlag)
@@ -79,10 +86,10 @@ func run(args []string) error {
 
 	// Static mode (original behavior)
 	if len(files) == 1 {
-		return runSingleFile(files[0])
+		return runSingleFile(files[0], *outputFlag)
 	}
 
-	return runMultiFile(files)
+	return runMultiFile(files, *outputFlag)
 }
 
 // runServe starts the live reload server.
@@ -193,7 +200,8 @@ func isIgnored(path, baseDir string, matchers map[string]*gitignore.GitIgnore) b
 }
 
 // runSingleFile handles single file preview (original behavior).
-func runSingleFile(filePath string) error {
+// If outputPath is provided, writes to that path instead of /tmp and skips browser.
+func runSingleFile(filePath string, outputPath string) error {
 	markdownContent, err := os.ReadFile(filePath)
 	if err != nil {
 		return fmt.Errorf("Error reading file: %v", err)
@@ -210,23 +218,32 @@ func runSingleFile(filePath string) error {
 
 	fullHTML := template.Generate(title, htmlContent)
 
-	outputFileName := fmt.Sprintf("mdpreview-%s.html", strings.ReplaceAll(filename, ".md", ""))
-	outputPath := filepath.Join("/tmp", outputFileName)
+	// Determine output path
+	openBrowser := false
+	if outputPath == "" {
+		outputFileName := fmt.Sprintf("mdpreview-%s.html", strings.ReplaceAll(filename, ".md", ""))
+		outputPath = filepath.Join("/tmp", outputFileName)
+		openBrowser = true
+	}
 
 	if err := os.WriteFile(outputPath, []byte(fullHTML), 0644); err != nil {
 		return fmt.Errorf("Error writing HTML file: %v", err)
 	}
 
-	if err := browser.Open(outputPath); err != nil {
-		return fmt.Errorf("Error opening browser: %v", err)
+	if openBrowser {
+		if err := browser.Open(outputPath); err != nil {
+			return fmt.Errorf("Error opening browser: %v", err)
+		}
+		fmt.Printf("Opened %s in browser\n", filePath)
+	} else {
+		fmt.Printf("Wrote %s\n", outputPath)
 	}
-
-	fmt.Printf("Opened %s in browser\n", filePath)
 	return nil
 }
 
 // runMultiFile handles multiple files preview with sidebar.
-func runMultiFile(filePaths []string) error {
+// If outputPath is provided, writes to that path instead of /tmp and skips browser.
+func runMultiFile(filePaths []string, outputPath string) error {
 	conv := converter.New()
 
 	baseDir := findCommonBase(filePaths)
@@ -260,16 +277,25 @@ func runMultiFile(filePaths []string) error {
 	title := generateTitle(baseDir, filePaths)
 	fullHTML := template.GenerateMulti(title, tree, entries)
 
-	outputPath := filepath.Join("/tmp", "mdpreview-multi.html")
+	// Determine output path
+	openBrowser := false
+	if outputPath == "" {
+		outputPath = filepath.Join("/tmp", "mdpreview-multi.html")
+		openBrowser = true
+	}
+
 	if err := os.WriteFile(outputPath, []byte(fullHTML), 0644); err != nil {
 		return fmt.Errorf("Error writing HTML file: %v", err)
 	}
 
-	if err := browser.Open(outputPath); err != nil {
-		return fmt.Errorf("Error opening browser: %v", err)
+	if openBrowser {
+		if err := browser.Open(outputPath); err != nil {
+			return fmt.Errorf("Error opening browser: %v", err)
+		}
+		fmt.Printf("Opened %d files in browser\n", len(filePaths))
+	} else {
+		fmt.Printf("Wrote %s\n", outputPath)
 	}
-
-	fmt.Printf("Opened %d files in browser\n", len(filePaths))
 	return nil
 }
 
@@ -342,6 +368,7 @@ Usage:
   mdp -v, --version            Show version
 
 Options:
+  -O, --output <file>          Write HTML to file instead of opening browser
   --serve                      Start live reload server instead of opening browser
   --port <port>                Port for live reload server (default: 8080)
 
@@ -349,6 +376,7 @@ Examples:
   mdp README.md                Preview single file
   mdp docs/                    Preview all markdown in docs/
   mdp README.md CHANGELOG.md   Preview multiple files with sidebar
+  mdp -O site.html docs/       Convert docs to single HTML file
   mdp --serve README.md        Start live reload server for single file
   mdp --serve --port 3000 .    Live reload all markdown in current directory`)
 }
