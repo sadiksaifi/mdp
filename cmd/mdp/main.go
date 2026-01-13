@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -42,7 +43,8 @@ func run(args []string) error {
 
 	// Setup flags
 	fs := flag.NewFlagSet("mdp", flag.ContinueOnError)
-	fs.Usage = func() {} // Suppress default usage
+	fs.SetOutput(io.Discard) // Suppress default error output
+	fs.Usage = func() {}     // Suppress default usage
 
 	serveFlag := fs.Bool("serve", false, "Start live reload server")
 	portFlag := fs.Int("port", 8080, "Port for live reload server (only with --serve)")
@@ -55,7 +57,7 @@ func run(args []string) error {
 			printUsage()
 			return nil
 		}
-		return err
+		return fmt.Errorf("%v\nRun 'mdp --help' for usage", err)
 	}
 
 	// Get remaining arguments (file paths)

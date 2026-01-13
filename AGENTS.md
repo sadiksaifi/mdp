@@ -15,6 +15,10 @@ make help             # Show all available targets
 ./mdp README.md CHANGELOG.md        # Multi-file with sidebar
 ./mdp ./docs/                       # All .md files in directory
 
+# Export to HTML file
+./mdp -O output.html README.md      # Export single file to HTML
+./mdp --output site.html ./docs/    # Export directory to HTML
+
 # Live reload server
 ./mdp --serve README.md             # Start server on port 8080
 ./mdp --serve --port 3000 ./docs/   # Start server on custom port
@@ -42,6 +46,8 @@ assets/               # Original CSS file (also embedded in template package)
 **Single-file flow**: Read .md file → Convert to HTML via goldmark (GFM) → Generate HTML document with embedded GitHub CSS → Write to `/tmp/mdpreview-{filename}.html` → Open in browser
 
 **Multi-file flow**: Resolve files (expand directories, respect .gitignore) → Convert all to HTML → Build file tree structure → Generate HTML with sidebar navigation → Write to `/tmp/mdpreview-multi.html` → Open in browser
+
+**Export flow (--output/-O)**: Same as single/multi-file flow, but writes to user-specified path instead of `/tmp/` and skips browser opening
 
 **Live reload flow (--serve)**: Resolve files → Start HTTP server → Watch files with fsnotify → On change: re-convert markdown → Notify clients via WebSocket → Browser auto-refreshes
 

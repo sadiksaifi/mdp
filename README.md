@@ -58,6 +58,7 @@ make build
 mdp <file.md>                    # Preview single file
 mdp <file1.md> <file2.md>        # Preview multiple files with sidebar
 mdp <directory>                  # Preview all .md files in directory
+mdp -O output.html <file.md>     # Export to HTML file
 mdp --serve <file.md>            # Start live reload server
 mdp --serve --port 3000 <dir>    # Live reload on custom port
 ```
@@ -66,6 +67,7 @@ mdp --serve --port 3000 <dir>    # Live reload on custom port
 
 | Option | Description |
 |--------|-------------|
+| `-O, --output <file>` | Write HTML to file instead of opening browser |
 | `--serve` | Start live reload server instead of opening browser |
 | `--port <port>` | Port for live reload server (default: `8080`) |
 | `-h, --help` | Show help message |
@@ -93,6 +95,16 @@ mdp README.md CHANGELOG.md docs/guide.md
 mdp ./docs/
 ```
 
+### Export to HTML
+
+```bash
+mdp -O docs.html README.md             # Export single file to HTML
+mdp --output site.html ./docs/         # Export directory to single HTML file
+```
+
+> [!TIP]
+> Use `--output` to generate standalone HTML files for sharing or hosting documentation.
+
 ### Live Reload Server
 
 ```bash
@@ -111,6 +123,7 @@ mdp --serve --port 3000 ./docs/    # Start server on port 3000
 |------|--------|
 | **Single file** | Opens `/tmp/mdpreview-{filename}.html` in your default browser |
 | **Multiple files/directory** | Opens `/tmp/mdpreview-multi.html` with sidebar navigation |
+| **Export mode (`-O`)** | Writes HTML to specified file path |
 | **Live reload mode** | Starts HTTP server at `http://localhost:<port>` with WebSocket auto-refresh |
 
 ---

@@ -17,6 +17,19 @@ func TestRun_NoArgs(t *testing.T) {
 	}
 }
 
+func TestRun_InvalidFlag(t *testing.T) {
+	err := run([]string{"--invalidflag"})
+	if err == nil {
+		t.Error("expected error for invalid flag")
+	}
+	if !strings.Contains(err.Error(), "flag provided but not defined") {
+		t.Errorf("expected 'flag provided but not defined' error, got: %v", err)
+	}
+	if !strings.Contains(err.Error(), "--help") {
+		t.Errorf("expected help hint in error message, got: %v", err)
+	}
+}
+
 func TestRun_HelpFlag(t *testing.T) {
 	err := run([]string{"--help"})
 	if err != nil {
