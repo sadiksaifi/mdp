@@ -618,7 +618,6 @@ const sidebarJS = `
             document.body.style.overflow = 'hidden';
         } else {
             sidebar.classList.remove('collapsed');
-            localStorage.setItem('mdp-sidebar-collapsed', 'false');
         }
     }
 
@@ -629,7 +628,6 @@ const sidebarJS = `
             document.body.style.overflow = '';
         } else {
             sidebar.classList.add('collapsed');
-            localStorage.setItem('mdp-sidebar-collapsed', 'true');
         }
     }
 
@@ -650,11 +648,6 @@ const sidebarJS = `
 
     for (var i = 0; i < directories.length; i++) {
         directories[i].addEventListener('click', toggleDirectory);
-    }
-
-    // Restore collapsed state from localStorage (desktop only)
-    if (window.innerWidth > 768 && localStorage.getItem('mdp-sidebar-collapsed') === 'true') {
-        sidebar.classList.add('collapsed');
     }
 
     // Set tooltip with keyboard shortcut based on platform
