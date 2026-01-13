@@ -31,7 +31,7 @@ const multiFileTemplate = `<!DOCTYPE html>
         </button>
         <span class="topbar-title">Preview</span>
         <button class="search-open-btn" aria-label="Search files" title="Search files">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
         </button>
     </div>
 
@@ -190,7 +190,11 @@ body {
     z-index: 100;
     display: none;
     flex-direction: row;
-    gap: 8px;
+    gap: 0;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 8px;
+    padding: 4px;
 }
 
 .sidebar.collapsed ~ .floating-buttons,
@@ -203,9 +207,9 @@ body:has(.sidebar.collapsed) .floating-buttons {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--sidebar-bg);
-    border: 1px solid var(--sidebar-border);
-    border-radius: 6px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
     padding: 8px;
     cursor: pointer;
     color: var(--fg-muted);
@@ -373,7 +377,9 @@ body:has(.sidebar.collapsed) .content {
         right: 0;
         height: 58px;
         background: var(--sidebar-bg);
+        border: none;
         border-bottom: 1px solid var(--sidebar-border);
+        border-radius: 0;
         padding: 0 12px;
         justify-content: space-between;
         align-items: center;
