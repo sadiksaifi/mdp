@@ -6,7 +6,7 @@
 
 A fast CLI tool that previews Markdown files in your browser with GitHub-styled rendering.
 
-<img width="1512" height="949" alt="Screenshot 2026-01-12 at 14 12 06" src="https://github.com/user-attachments/assets/7e8652d1-1387-4873-bfe3-6f0749f6ae47" />
+<img width="2560" height="1440" alt="Screenshot 2026-01-13 at 06 21 26" src="https://github.com/user-attachments/assets/561f75ba-ddf9-4506-bb10-d136a5a38822" />
 
 ---
 
