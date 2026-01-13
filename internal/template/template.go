@@ -13,135 +13,7 @@ var chromaCSS string
 
 const commentsCSS = `
 :root {
-    --panel-section-height: 44px;
-    --topbar-height: 56px;
-    --fg-color: #1f2328;
-    --fg-muted: #59636e;
-    --panel-bg: #f6f8fa;
-    --panel-border: #d1d9e0;
-    --panel-hover: #e6e8eb;
-    --accent-color: #0969da;
-    --accent-bg: #ddf4ff;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --fg-color: #e6edf3;
-        --fg-muted: #9198a1;
-        --panel-bg: #161b22;
-        --panel-border: #3d444d;
-        --panel-hover: #21262d;
-        --accent-color: #58a6ff;
-        --accent-bg: #388bfd26;
-    }
-}
-
-/* Desktop Top Bar */
-.topbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: var(--topbar-height);
-    background: var(--panel-bg);
-    border-bottom: 1px solid var(--panel-border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 4px 0 16px;
-    z-index: 250;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-}
-
-.topbar-left,
-.topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.topbar-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.topbar-brand {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--fg-color);
-    letter-spacing: 1px;
-}
-
-.topbar-brand-sub {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--fg-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.topbar-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    border-radius: 6px;
-    padding: 8px;
-    cursor: pointer;
-    color: var(--fg-muted);
-    transition: all 0.2s ease;
-}
-
-.topbar-btn:hover {
-    color: var(--fg-color);
-    background: var(--panel-hover);
-}
-
-.topbar-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-.topbar-btn.active {
-    color: var(--accent-color);
-    background: var(--accent-bg);
-}
-
-.topbar-comment-btn {
-    position: relative;
-}
-
-.topbar-comment-count {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 4px;
-    background: var(--accent-color);
-    color: #ffffff;
-    border-radius: 8px;
-    font-size: 10px;
-    font-weight: 600;
-    display: none;
-    align-items: center;
-    justify-content: center;
-}
-
-.topbar-comment-count.visible {
-    display: flex;
-}
-
-.topbar-divider {
-    width: 1px;
-    height: 24px;
-    background: var(--panel-border);
-    margin: 0 4px;
+    --panel-section-height: 56px;
 }
 
 /* Comment Button */
@@ -208,9 +80,9 @@ const commentsCSS = `
 .comments-panel {
     position: fixed;
     right: 0;
-    top: var(--topbar-height);
+    top: 0;
     bottom: 0;
-    width: 280px;
+    width: 320px;
     background: #f6f8fa;
     border-left: 1px solid #d1d9e0;
     display: flex;
@@ -227,19 +99,39 @@ const commentsCSS = `
 
 .comments-panel-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     height: var(--panel-section-height);
     padding: 0 16px;
+    border-bottom: 1px solid #d1d9e0;
     flex-shrink: 0;
 }
 
 .comments-panel-header h2 {
     margin: 0;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
-    color: var(--fg-muted);
+    color: #59636e;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.comments-panel-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #59636e;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.comments-panel-close-btn:hover {
+    color: #1f2328;
+    background: #e6e8eb;
 }
 
 /* Comments List */
@@ -428,16 +320,62 @@ const commentsCSS = `
     filter: brightness(1.1);
 }
 
-/* Open Comments Button - hidden on desktop (shown in topbar) */
+/* Open Comments Button */
 .open-comments-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: #f6f8fa;
+    border: 1px solid #d1d9e0;
+    border-radius: 8px;
+    color: #59636e;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.open-comments-btn:hover {
+    color: #1f2328;
+    background: #e6e8eb;
+}
+
+.open-comments-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.comment-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: #0969da;
+    color: #ffffff;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 600;
     display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.comment-count.visible {
+    display: flex;
 }
 
 /* Comments Panel Footer */
 .comments-panel-footer {
     display: flex;
     align-items: center;
-    justify-content: center;
     height: var(--panel-section-height);
     padding: 0 16px;
     border-top: 1px solid #d1d9e0;
@@ -449,28 +387,27 @@ const commentsCSS = `
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    height: 36px;
-    padding: 0 12px;
-    background: transparent;
-    border: none;
-    border-radius: 6px;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    background: #f6f8fa;
+    border: 1px solid #d1d9e0;
+    border-radius: 8px;
     color: #59636e;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
 }
 
 .copy-comments-btn:hover {
-    color: #0969da;
-    background: rgba(9, 105, 218, 0.08);
+    color: #1f2328;
+    background: #e6e8eb;
 }
 
 .copy-comments-btn.copied {
     color: #1a7f37;
-    background: rgba(26, 127, 55, 0.08);
 }
 
 .copy-comments-btn svg {
@@ -639,6 +576,23 @@ const commentsCSS = `
         border-left-color: #3d444d;
     }
 
+    .comments-panel-header {
+        border-bottom-color: #3d444d;
+    }
+
+    .comments-panel-header h2 {
+        color: #9198a1;
+    }
+
+    .comments-panel-close-btn {
+        color: #9198a1;
+    }
+
+    .comments-panel-close-btn:hover {
+        color: #e6edf3;
+        background: #21262d;
+    }
+
     .comments-list::-webkit-scrollbar-thumb {
         background-color: #3d444d;
     }
@@ -742,18 +696,18 @@ const commentsCSS = `
     }
 
     .copy-comments-btn {
-        background: transparent;
+        background: #21262d;
+        border-color: #3d444d;
         color: #9198a1;
     }
 
     .copy-comments-btn:hover {
-        color: #58a6ff;
-        background: rgba(88, 166, 255, 0.1);
+        color: #e6edf3;
+        background: #30363d;
     }
 
     .copy-comments-btn.copied {
         color: #3fb950;
-        background: rgba(63, 185, 80, 0.1);
     }
 
     .comments-empty {
@@ -807,13 +761,7 @@ const commentsCSS = `
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
-    /* Hide desktop top bar on mobile */
-    .topbar {
-        display: none;
-    }
-
     .comments-panel {
-        top: 0;
         width: 100%;
     }
 
@@ -822,50 +770,9 @@ const commentsCSS = `
         padding: 6px 10px;
     }
 
-    /* Show floating comments button on mobile */
     .open-comments-btn {
-        display: flex;
-        position: fixed;
+        top: auto;
         bottom: 16px;
-        right: 16px;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        padding: 0;
-        background: var(--panel-bg);
-        border: 1px solid var(--panel-border);
-        border-radius: 22px;
-        color: var(--fg-muted);
-        cursor: pointer;
-        z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .open-comments-btn svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    .comment-count {
-        position: absolute;
-        top: -4px;
-        right: -4px;
-        min-width: 18px;
-        height: 18px;
-        padding: 0 5px;
-        background: var(--accent-color);
-        color: #ffffff;
-        border-radius: 9px;
-        font-size: 11px;
-        font-weight: 600;
-        display: none;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .comment-count.visible {
-        display: flex;
     }
 }
 `
@@ -965,7 +872,7 @@ const htmlTemplate = `<!DOCTYPE html>
     </article>
     <a href="https://github.com/sadiksaifi/mdp" class="github-link" target="_blank" rel="noopener noreferrer" title="Star on GitHub">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-        <span>Star on GitHub</span>
+        <span>Made by Sadik Saifi</span>
     </a>
     %s
     %s
@@ -1053,14 +960,10 @@ const commentsJS = `
             var copyCommentsBtn = document.querySelector('.copy-comments-btn');
             var openCommentsBtn = document.querySelector('.open-comments-btn');
             var commentCount = document.querySelector('.comment-count');
+            var commentsPanelCloseBtn = document.querySelector('.comments-panel-close-btn');
             var commentCancelBtn = document.querySelector('.comment-cancel-btn');
             var commentSaveBtn = document.querySelector('.comment-save-btn');
             var commentsEmpty = document.querySelector('.comments-empty');
-
-            // Desktop topbar elements
-            var topbarCommentBtn = document.querySelector('.topbar-comment-btn');
-            var topbarCommentCount = document.querySelector('.topbar-comment-count');
-            var topbarHelpBtn = document.querySelector('.topbar-help-btn');
             var shortcutsOverlay = document.querySelector('.shortcuts-modal-overlay');
             var shortcutsModal = document.querySelector('.shortcuts-modal');
             var shortcutsCloseBtn = document.querySelector('.shortcuts-modal-close');
@@ -1262,12 +1165,10 @@ const commentsJS = `
             // Comments panel
             function openCommentsPanel() {
                 commentsPanel.classList.add('open');
-                topbarCommentBtn.classList.add('active');
             }
 
             function closeCommentsPanel() {
                 commentsPanel.classList.remove('open');
-                topbarCommentBtn.classList.remove('active');
                 hideInputForm();
             }
 
@@ -1418,17 +1319,12 @@ const commentsJS = `
 
             function updateCommentsUI() {
                 var count = comments.length;
-                // Update mobile comment count
                 commentCount.textContent = count;
-                // Update topbar comment count
-                topbarCommentCount.textContent = count;
                 if (count > 0) {
                     commentCount.classList.add('visible');
-                    topbarCommentCount.classList.add('visible');
                     commentsEmpty.style.display = 'none';
                 } else {
                     commentCount.classList.remove('visible');
-                    topbarCommentCount.classList.remove('visible');
                     commentsEmpty.style.display = 'block';
                 }
             }
@@ -1541,6 +1437,7 @@ const commentsJS = `
                 currentSelectedText = '';
             });
 
+            commentsPanelCloseBtn.addEventListener('click', closeCommentsPanel);
             copyCommentsBtn.addEventListener('click', copyCommentsAsMarkdown);
             openCommentsBtn.addEventListener('click', function() {
                 if (commentsPanel.classList.contains('open')) {
@@ -1548,20 +1445,6 @@ const commentsJS = `
                 } else {
                     openCommentsPanel();
                 }
-            });
-
-            // Desktop topbar comment button
-            topbarCommentBtn.addEventListener('click', function() {
-                if (commentsPanel.classList.contains('open')) {
-                    closeCommentsPanel();
-                } else {
-                    openCommentsPanel();
-                }
-            });
-
-            // Desktop topbar help button
-            topbarHelpBtn.addEventListener('click', function() {
-                openShortcutsModal();
             });
 
             // Click on highlight to show comment
@@ -1663,6 +1546,9 @@ const commentsHTML = `
     <aside class="comments-panel" role="complementary" aria-label="Comments">
         <div class="comments-panel-header">
             <h2>Comments</h2>
+            <button class="comments-panel-close-btn" aria-label="Close comments">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
         <div class="comments-list">
             <div class="comments-empty">

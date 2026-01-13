@@ -113,6 +113,9 @@ const multiFileTemplate = `<!DOCTYPE html>
     <aside class="comments-panel" role="complementary" aria-label="Comments">
         <div class="comments-panel-header">
             <h2>Comments</h2>
+            <button class="comments-panel-close-btn" aria-label="Close comments">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
         </div>
         <div class="comments-list">
             <div class="comments-empty">
@@ -198,8 +201,7 @@ const sidebarCSS = `
     --transition-speed: 0.3s;
     --fg-color: #1f2328;
     --fg-muted: #59636e;
-    --panel-section-height: 44px;
-    --topbar-height: 56px;
+    --panel-section-height: 56px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -370,6 +372,9 @@ body {
     align-items: center;
     height: var(--panel-section-height);
     padding: 0 16px;
+    border-bottom: 1px solid var(--sidebar-border);
+    background: var(--sidebar-bg);
+    z-index: 10;
     flex-shrink: 0;
 }
 
@@ -385,7 +390,25 @@ body {
 .sidebar-footer {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--fg-muted);
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.sidebar-close-btn:hover,
+.sidebar-search-btn:hover {
+    color: var(--fg-color);
+    background: var(--sidebar-hover);
+}
+
+.sidebar-footer {
+    display: flex;
+    align-items: center;
     height: var(--panel-section-height);
     padding: 0 16px;
     border-top: 1px solid var(--sidebar-border);
@@ -897,9 +920,9 @@ body:has(.sidebar.collapsed) .content {
 .comments-panel {
     position: fixed;
     right: 0;
-    top: var(--topbar-height);
+    top: 0;
     bottom: 0;
-    width: var(--sidebar-width);
+    width: 320px;
     background: var(--sidebar-bg);
     border-left: 1px solid var(--sidebar-border);
     display: flex;
@@ -915,19 +938,39 @@ body:has(.sidebar.collapsed) .content {
 
 .comments-panel-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     height: var(--panel-section-height);
     padding: 0 16px;
+    border-bottom: 1px solid var(--sidebar-border);
     flex-shrink: 0;
 }
 
 .comments-panel-header h2 {
     margin: 0;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--fg-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.comments-panel-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--fg-muted);
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.comments-panel-close-btn:hover {
+    color: var(--fg-color);
+    background: var(--sidebar-hover);
 }
 
 /* Comments List */
@@ -1118,16 +1161,62 @@ body:has(.sidebar.collapsed) .content {
     filter: brightness(1.1);
 }
 
-/* Open Comments Button - hidden on desktop (shown in topbar), shown on mobile */
+/* Open Comments Button */
 .open-comments-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 8px;
+    color: var(--fg-muted);
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.open-comments-btn:hover {
+    color: var(--fg-color);
+    background: var(--sidebar-hover);
+}
+
+.open-comments-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.comment-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: var(--sidebar-active);
+    color: #ffffff;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 600;
     display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.comment-count.visible {
+    display: flex;
 }
 
 /* Comments Panel Footer */
 .comments-panel-footer {
     display: flex;
     align-items: center;
-    justify-content: center;
     height: var(--panel-section-height);
     padding: 0 16px;
     border-top: 1px solid var(--sidebar-border);
@@ -1139,28 +1228,27 @@ body:has(.sidebar.collapsed) .content {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    height: 36px;
-    padding: 0 12px;
-    background: transparent;
-    border: none;
-    border-radius: 6px;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--sidebar-hover);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 8px;
     color: var(--fg-muted);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
 }
 
 .copy-comments-btn:hover {
-    color: var(--accent-color);
-    background: var(--accent-bg);
+    color: var(--fg-color);
+    background: var(--sidebar-bg);
 }
 
 .copy-comments-btn.copied {
     color: #1a7f37;
-    background: rgba(26, 127, 55, 0.08);
 }
 
 .copy-comments-btn svg {
@@ -1347,7 +1435,6 @@ body:has(.sidebar.collapsed) .content {
 
     .copy-comments-btn.copied {
         color: #3fb950;
-        background: rgba(63, 185, 80, 0.1);
     }
 
     .shortcuts-modal-overlay {
@@ -1359,6 +1446,22 @@ body:has(.sidebar.collapsed) .content {
     }
 }
 
+/* Mobile Responsive for Comments */
+@media (max-width: 768px) {
+    .comments-panel {
+        width: 100%;
+    }
+
+    .comment-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .open-comments-btn {
+        top: auto;
+        bottom: 16px;
+    }
+}
 `
 
 const sidebarJS = `
@@ -1367,18 +1470,13 @@ const sidebarJS = `
 
     var sidebar = document.querySelector('.sidebar');
     var openBtn = document.querySelector('.sidebar-open-btn');
+    var closeBtn = document.querySelector('.sidebar-close-btn');
     var searchBtn = document.querySelector('.search-open-btn');
+    var sidebarSearchBtn = document.querySelector('.sidebar-search-btn');
     var overlay = document.querySelector('.sidebar-overlay');
     var fileLinks = document.querySelectorAll('.file-tree a[data-file]');
     var contentSections = document.querySelectorAll('.content-section');
     var directories = document.querySelectorAll('.file-tree .directory > span');
-
-    // Desktop topbar elements
-    var topbarSidebarBtn = document.querySelector('.topbar-sidebar-btn');
-    var topbarSearchBtn = document.querySelector('.topbar-search-btn');
-    var topbarCommentBtn = document.querySelector('.topbar-comment-btn');
-    var topbarCommentCount = document.querySelector('.topbar-comment-count');
-    var topbarHelpBtn = document.querySelector('.topbar-help-btn');
 
     function isMobile() {
         return window.innerWidth <= 768;
@@ -1424,7 +1522,6 @@ const sidebarJS = `
             document.body.style.overflow = 'hidden';
         } else {
             sidebar.classList.remove('collapsed');
-            topbarSidebarBtn.classList.add('active');
         }
     }
 
@@ -1435,23 +1532,6 @@ const sidebarJS = `
             document.body.style.overflow = '';
         } else {
             sidebar.classList.add('collapsed');
-            topbarSidebarBtn.classList.remove('active');
-        }
-    }
-
-    function toggleSidebar() {
-        if (isMobile()) {
-            if (sidebar.classList.contains('open')) {
-                closeSidebar();
-            } else {
-                openSidebar();
-            }
-        } else {
-            if (sidebar.classList.contains('collapsed')) {
-                openSidebar();
-            } else {
-                closeSidebar();
-            }
         }
     }
 
@@ -1467,24 +1547,11 @@ const sidebarJS = `
     }
 
     openBtn.addEventListener('click', openSidebar);
+    closeBtn.addEventListener('click', closeSidebar);
     overlay.addEventListener('click', closeSidebar);
-
-    // Desktop topbar event listeners
-    topbarSidebarBtn.addEventListener('click', toggleSidebar);
-    topbarSearchBtn.addEventListener('click', function() {
-        openSearchPalette();
-    });
-    topbarHelpBtn.addEventListener('click', function() {
-        openShortcutsModal();
-    });
 
     for (var i = 0; i < directories.length; i++) {
         directories[i].addEventListener('click', toggleDirectory);
-    }
-
-    // Initialize sidebar state on desktop (open by default)
-    if (!isMobile() && !sidebar.classList.contains('collapsed')) {
-        topbarSidebarBtn.classList.add('active');
     }
 
     // Set tooltip with keyboard shortcut based on platform
@@ -1492,7 +1559,9 @@ const sidebarJS = `
     var shortcut = isMac ? '⌘B' : 'Ctrl+B';
     var searchShortcut = isMac ? '⌘K' : 'Ctrl+K';
     openBtn.title = 'Open sidebar (' + shortcut + ')';
+    closeBtn.title = 'Close sidebar (' + shortcut + ')';
     searchBtn.title = 'Search files (' + searchShortcut + ')';
+    sidebarSearchBtn.title = 'Search files (' + searchShortcut + ')';
 
     // Initialize file display
     if (window.location.hash) {
@@ -1752,6 +1821,7 @@ const sidebarJS = `
     var copyCommentsBtn = document.querySelector('.copy-comments-btn');
     var openCommentsBtn = document.querySelector('.open-comments-btn');
     var commentCountEl = document.querySelector('.comment-count');
+    var commentsPanelCloseBtn = document.querySelector('.comments-panel-close-btn');
     var commentCancelBtn = document.querySelector('.comment-cancel-btn');
     var commentSaveBtn = document.querySelector('.comment-save-btn');
     var commentsEmpty = document.querySelector('.comments-empty');
@@ -1964,12 +2034,10 @@ const sidebarJS = `
 
     function openCommentsPanel() {
         commentsPanel.classList.add('open');
-        topbarCommentBtn.classList.add('active');
     }
 
     function closeCommentsPanel() {
         commentsPanel.classList.remove('open');
-        topbarCommentBtn.classList.remove('active');
         hideInputForm();
     }
 
@@ -2135,17 +2203,12 @@ const sidebarJS = `
     function updateCommentsUI() {
         var comments = getComments();
         var count = comments.length;
-        // Update mobile comment count
         commentCountEl.textContent = count;
-        // Update topbar comment count
-        topbarCommentCount.textContent = count;
         if (count > 0) {
             commentCountEl.classList.add('visible');
-            topbarCommentCount.classList.add('visible');
             commentsEmpty.style.display = 'none';
         } else {
             commentCountEl.classList.remove('visible');
-            topbarCommentCount.classList.remove('visible');
             commentsEmpty.style.display = 'block';
         }
     }
@@ -2283,23 +2346,13 @@ const sidebarJS = `
         currentSelectedText = '';
     });
 
+    commentsPanelCloseBtn.addEventListener('click', closeCommentsPanel);
     copyCommentsBtn.addEventListener('click', copyCommentsAsMarkdown);
     openCommentsBtn.addEventListener('click', function() {
         if (commentsPanel.classList.contains('open')) {
             closeCommentsPanel();
         } else {
             openCommentsPanel();
-        }
-    });
-
-    // Desktop topbar comment button
-    topbarCommentBtn.addEventListener('click', function() {
-        if (commentsPanel.classList.contains('open')) {
-            closeCommentsPanel();
-            topbarCommentBtn.classList.remove('active');
-        } else {
-            openCommentsPanel();
-            topbarCommentBtn.classList.add('active');
         }
     });
 
