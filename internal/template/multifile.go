@@ -25,6 +25,7 @@ const multiFileTemplate = `<!DOCTYPE html>
     </style>
 </head>
 <body>
+    <script>if(history.scrollRestoration)history.scrollRestoration='manual';window.scrollTo(0,0);</script>
     <div class="floating-buttons">
         <button class="sidebar-open-btn" aria-label="Open sidebar" title="Open sidebar">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" /><path d="M15 4l0 16" /></svg>
@@ -113,6 +114,14 @@ const sidebarCSS = `
 
 * {
     box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: auto;
+}
+
+:target {
+    scroll-margin-top: 100vh;
 }
 
 body {
@@ -620,6 +629,8 @@ const sidebarJS = `
         return window.innerWidth <= 768;
     }
 
+    var isInitialLoad = true;
+
     function showFile(fileId) {
         for (var i = 0; i < contentSections.length; i++) {
             if (contentSections[i].id === fileId) {
@@ -642,6 +653,13 @@ const sidebarJS = `
         }
 
         history.replaceState(null, '', '#' + fileId);
+
+        if (isInitialLoad) {
+            isInitialLoad = false;
+            requestAnimationFrame(function() {
+                window.scrollTo(0, 0);
+            });
+        }
     }
 
     function openSidebar() {
@@ -1020,10 +1038,15 @@ func renderTreeNode(buf *strings.Builder, node *filetree.TreeNode) {
 // generateContentSections creates the content divs for each file.
 func generateContentSections(files []filetree.FileEntry) string {
 	var buf strings.Builder
-	for _, f := range files {
+	for i, f := range files {
+		class := "content-section"
+		if i == 0 {
+			class = "content-section active"
+		}
 		buf.WriteString(fmt.Sprintf(
-			`<section id="%s" class="content-section"><article class="markdown-body">%s</article></section>`,
+			`<section id="%s" class="%s"><article class="markdown-body">%s</article></section>`,
 			html.EscapeString(f.ID),
+			class,
 			f.Content,
 		))
 	}
