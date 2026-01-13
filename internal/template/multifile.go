@@ -26,11 +26,39 @@ const multiFileTemplate = `<!DOCTYPE html>
 </head>
 <body>
     <script>if(history.scrollRestoration)history.scrollRestoration='manual';window.scrollTo(0,0);</script>
+
+    <!-- Desktop Top Bar -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="topbar-btn topbar-sidebar-btn" aria-label="Toggle sidebar" title="Toggle sidebar (⌘B)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" /><path d="M9 4l0 16" /></svg>
+            </button>
+        </div>
+        <div class="topbar-center">
+            <span class="topbar-brand">MARKDOWN PREVIEW</span>
+        </div>
+        <div class="topbar-right">
+            <button class="topbar-btn topbar-search-btn" aria-label="Search files" title="Search files (⌘K)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+            </button>
+            <div class="topbar-divider"></div>
+            <button class="topbar-btn topbar-comment-btn" aria-label="Toggle comments" title="Toggle comments (⌘/)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                <span class="topbar-comment-count">0</span>
+            </button>
+            <div class="topbar-divider"></div>
+            <button class="topbar-btn topbar-help-btn" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Top Bar (floating buttons) -->
     <div class="floating-buttons">
         <button class="sidebar-open-btn" aria-label="Open sidebar" title="Open sidebar">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" /><path d="M15 4l0 16" /></svg>
         </button>
-        <span class="topbar-title">Preview</span>
+        <span class="topbar-title">MARKDOWN PREVIEW</span>
         <button class="search-open-btn" aria-label="Search files" title="Search files">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
         </button>
@@ -41,14 +69,6 @@ const multiFileTemplate = `<!DOCTYPE html>
     <aside class="sidebar" role="navigation" aria-label="File navigation">
         <div class="sidebar-header">
             <h2>Files</h2>
-            <div class="sidebar-header-buttons">
-                <button class="sidebar-search-btn" aria-label="Search files" title="Search files">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
-                </button>
-                <button class="sidebar-close-btn" aria-label="Close sidebar" title="Close sidebar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" /><path d="M9 4l0 16" /></svg>
-                </button>
-            </div>
         </div>
         <nav class="file-tree">
             %s
@@ -56,7 +76,7 @@ const multiFileTemplate = `<!DOCTYPE html>
         <div class="sidebar-footer">
             <a href="https://github.com/sadiksaifi/mdp" target="_blank" rel="noopener noreferrer" title="Star on GitHub">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                <span>Made by Sadik Saifi</span>
+                <span>Star on GitHub</span>
             </a>
         </div>
     </aside>
@@ -93,9 +113,6 @@ const multiFileTemplate = `<!DOCTYPE html>
     <aside class="comments-panel" role="complementary" aria-label="Comments">
         <div class="comments-panel-header">
             <h2>Comments</h2>
-            <button class="comments-panel-close-btn" aria-label="Close comments">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
         </div>
         <div class="comments-list">
             <div class="comments-empty">
@@ -181,7 +198,8 @@ const sidebarCSS = `
     --transition-speed: 0.3s;
     --fg-color: #1f2328;
     --fg-muted: #59636e;
-    --panel-section-height: 56px;
+    --panel-section-height: 44px;
+    --topbar-height: 56px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -221,10 +239,117 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
 }
 
+/* Desktop Top Bar */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--topbar-height);
+    background: var(--sidebar-bg);
+    border-bottom: 1px solid var(--sidebar-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px 0 16px;
+    z-index: 250;
+}
+
+.topbar-left,
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.topbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topbar-brand {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fg-color);
+    letter-spacing: 1px;
+}
+
+.topbar-brand-sub {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.topbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--fg-muted);
+    transition: all 0.2s ease;
+}
+
+.topbar-btn:hover {
+    color: var(--fg-color);
+    background: var(--sidebar-hover);
+}
+
+.topbar-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.topbar-btn.active {
+    color: var(--sidebar-active);
+    background: var(--sidebar-active-bg);
+}
+
+.topbar-comment-btn {
+    position: relative;
+}
+
+.topbar-comment-count {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    background: var(--sidebar-active);
+    color: #ffffff;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.topbar-comment-count.visible {
+    display: flex;
+}
+
+.topbar-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--sidebar-border);
+    margin: 0 4px;
+}
+
 .sidebar {
     position: fixed;
     left: 0;
-    top: 0;
+    top: var(--topbar-height);
     bottom: 0;
     width: var(--sidebar-width);
     background: var(--sidebar-bg);
@@ -242,53 +367,25 @@ body {
 
 .sidebar-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     height: var(--panel-section-height);
     padding: 0 16px;
-    border-bottom: 1px solid var(--sidebar-border);
-    background: var(--sidebar-bg);
-    z-index: 10;
     flex-shrink: 0;
 }
 
 .sidebar-header h2 {
     margin: 0;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--fg-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-.sidebar-header-buttons {
-    display: flex;
-    gap: 4px;
-}
-
-.sidebar-close-btn,
-.sidebar-search-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--fg-muted);
-    padding: 4px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.sidebar-close-btn:hover,
-.sidebar-search-btn:hover {
-    color: var(--fg-color);
-    background: var(--sidebar-hover);
-}
-
 .sidebar-footer {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     height: var(--panel-section-height);
     padding: 0 16px;
     border-top: 1px solid var(--sidebar-border);
@@ -299,11 +396,11 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    height: 100%;
     color: var(--fg-muted);
     text-decoration: none;
     font-size: 12px;
     transition: color 0.2s ease;
-    line-height: 1;
 }
 
 .sidebar-footer a:hover {
@@ -314,43 +411,9 @@ body {
     flex-shrink: 0;
 }
 
+/* Mobile floating buttons (hidden on desktop) */
 .floating-buttons {
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    z-index: 100;
     display: none;
-    flex-direction: row;
-    gap: 0;
-    background: var(--sidebar-bg);
-    border: 1px solid var(--sidebar-border);
-    border-radius: 8px;
-    padding: 4px;
-}
-
-.sidebar.collapsed ~ .floating-buttons,
-body:has(.sidebar.collapsed) .floating-buttons {
-    display: flex;
-}
-
-.sidebar-open-btn,
-.search-open-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    border-radius: 4px;
-    padding: 8px;
-    cursor: pointer;
-    color: var(--fg-muted);
-    transition: all 0.2s ease;
-}
-
-.sidebar-open-btn:hover,
-.search-open-btn:hover {
-    color: var(--fg-color);
-    background: var(--sidebar-hover);
 }
 
 .topbar-title {
@@ -358,7 +421,7 @@ body:has(.sidebar.collapsed) .floating-buttons {
 }
 
 .file-tree {
-    padding: 8px 0;
+    padding: 0;
     flex: 1;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -460,7 +523,7 @@ body:has(.sidebar.collapsed) .content {
     flex: 1;
     margin-left: auto;
     margin-right: auto;
-    padding: var(--content-padding);
+    padding: calc(var(--topbar-height) + var(--content-padding)) var(--content-padding) var(--content-padding);
     max-width: 980px;
     min-width: 0;
 }
@@ -488,8 +551,15 @@ body:has(.sidebar.collapsed) .content {
 }
 
 @media (max-width: 768px) {
+    /* Hide desktop top bar on mobile */
+    .topbar {
+        display: none;
+    }
+
     .sidebar {
+        top: 0;
         transform: translateX(-100%);
+        z-index: 300;
     }
 
     .sidebar.open {
@@ -500,6 +570,7 @@ body:has(.sidebar.collapsed) .content {
         transform: translateX(-100%);
     }
 
+    /* Show mobile top bar */
     .floating-buttons {
         display: flex;
         position: fixed;
@@ -515,12 +586,19 @@ body:has(.sidebar.collapsed) .content {
         justify-content: space-between;
         align-items: center;
         gap: 0;
+        z-index: 250;
     }
 
     .floating-buttons .sidebar-open-btn,
     .floating-buttons .search-open-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         border: none;
         background: transparent;
+        padding: 8px;
+        color: var(--fg-muted);
+        cursor: pointer;
     }
 
     .sidebar-search-btn {
@@ -546,6 +624,62 @@ body:has(.sidebar.collapsed) .content {
 
     .sidebar-overlay.active {
         pointer-events: auto;
+    }
+
+    /* Show floating comments button on mobile */
+    .open-comments-btn {
+        display: flex;
+        position: fixed;
+        bottom: 16px;
+        right: 16px;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        background: var(--sidebar-bg);
+        border: 1px solid var(--sidebar-border);
+        border-radius: 22px;
+        color: var(--fg-muted);
+        cursor: pointer;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .open-comments-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .comment-count {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        background: var(--sidebar-active);
+        color: #ffffff;
+        border-radius: 9px;
+        font-size: 11px;
+        font-weight: 600;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .comment-count.visible {
+        display: flex;
+    }
+
+    .comments-panel {
+        top: 0;
+        width: 100%;
+    }
+
+    .comment-btn {
+        font-size: 12px;
+        padding: 6px 10px;
     }
 }
 
@@ -763,9 +897,9 @@ body:has(.sidebar.collapsed) .content {
 .comments-panel {
     position: fixed;
     right: 0;
-    top: 0;
+    top: var(--topbar-height);
     bottom: 0;
-    width: 320px;
+    width: var(--sidebar-width);
     background: var(--sidebar-bg);
     border-left: 1px solid var(--sidebar-border);
     display: flex;
@@ -781,39 +915,19 @@ body:has(.sidebar.collapsed) .content {
 
 .comments-panel-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     height: var(--panel-section-height);
     padding: 0 16px;
-    border-bottom: 1px solid var(--sidebar-border);
     flex-shrink: 0;
 }
 
 .comments-panel-header h2 {
     margin: 0;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--fg-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}
-
-.comments-panel-close-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--fg-muted);
-    padding: 4px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.comments-panel-close-btn:hover {
-    color: var(--fg-color);
-    background: var(--sidebar-hover);
 }
 
 /* Comments List */
@@ -1004,62 +1118,16 @@ body:has(.sidebar.collapsed) .content {
     filter: brightness(1.1);
 }
 
-/* Open Comments Button */
+/* Open Comments Button - hidden on desktop (shown in topbar), shown on mobile */
 .open-comments-btn {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    background: var(--sidebar-bg);
-    border: 1px solid var(--sidebar-border);
-    border-radius: 8px;
-    color: var(--fg-muted);
-    cursor: pointer;
-    z-index: 100;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-}
-
-.open-comments-btn:hover {
-    color: var(--fg-color);
-    background: var(--sidebar-hover);
-}
-
-.open-comments-btn svg {
-    width: 18px;
-    height: 18px;
-}
-
-.comment-count {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    background: var(--sidebar-active);
-    color: #ffffff;
-    border-radius: 9px;
-    font-size: 11px;
-    font-weight: 600;
     display: none;
-    align-items: center;
-    justify-content: center;
-}
-
-.comment-count.visible {
-    display: flex;
 }
 
 /* Comments Panel Footer */
 .comments-panel-footer {
     display: flex;
     align-items: center;
+    justify-content: center;
     height: var(--panel-section-height);
     padding: 0 16px;
     border-top: 1px solid var(--sidebar-border);
@@ -1071,27 +1139,28 @@ body:has(.sidebar.collapsed) .content {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    width: 100%;
-    padding: 10px 16px;
-    background: var(--sidebar-hover);
-    border: 1px solid var(--sidebar-border);
-    border-radius: 8px;
+    gap: 6px;
+    height: 36px;
+    padding: 0 12px;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
     color: var(--fg-muted);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
 }
 
 .copy-comments-btn:hover {
-    color: var(--fg-color);
-    background: var(--sidebar-bg);
+    color: var(--accent-color);
+    background: var(--accent-bg);
 }
 
 .copy-comments-btn.copied {
     color: #1a7f37;
+    background: rgba(26, 127, 55, 0.08);
 }
 
 .copy-comments-btn svg {
@@ -1278,6 +1347,7 @@ body:has(.sidebar.collapsed) .content {
 
     .copy-comments-btn.copied {
         color: #3fb950;
+        background: rgba(63, 185, 80, 0.1);
     }
 
     .shortcuts-modal-overlay {
@@ -1289,22 +1359,6 @@ body:has(.sidebar.collapsed) .content {
     }
 }
 
-/* Mobile Responsive for Comments */
-@media (max-width: 768px) {
-    .comments-panel {
-        width: 100%;
-    }
-
-    .comment-btn {
-        font-size: 12px;
-        padding: 6px 10px;
-    }
-
-    .open-comments-btn {
-        top: auto;
-        bottom: 16px;
-    }
-}
 `
 
 const sidebarJS = `
@@ -1313,13 +1367,18 @@ const sidebarJS = `
 
     var sidebar = document.querySelector('.sidebar');
     var openBtn = document.querySelector('.sidebar-open-btn');
-    var closeBtn = document.querySelector('.sidebar-close-btn');
     var searchBtn = document.querySelector('.search-open-btn');
-    var sidebarSearchBtn = document.querySelector('.sidebar-search-btn');
     var overlay = document.querySelector('.sidebar-overlay');
     var fileLinks = document.querySelectorAll('.file-tree a[data-file]');
     var contentSections = document.querySelectorAll('.content-section');
     var directories = document.querySelectorAll('.file-tree .directory > span');
+
+    // Desktop topbar elements
+    var topbarSidebarBtn = document.querySelector('.topbar-sidebar-btn');
+    var topbarSearchBtn = document.querySelector('.topbar-search-btn');
+    var topbarCommentBtn = document.querySelector('.topbar-comment-btn');
+    var topbarCommentCount = document.querySelector('.topbar-comment-count');
+    var topbarHelpBtn = document.querySelector('.topbar-help-btn');
 
     function isMobile() {
         return window.innerWidth <= 768;
@@ -1365,6 +1424,7 @@ const sidebarJS = `
             document.body.style.overflow = 'hidden';
         } else {
             sidebar.classList.remove('collapsed');
+            topbarSidebarBtn.classList.add('active');
         }
     }
 
@@ -1375,6 +1435,23 @@ const sidebarJS = `
             document.body.style.overflow = '';
         } else {
             sidebar.classList.add('collapsed');
+            topbarSidebarBtn.classList.remove('active');
+        }
+    }
+
+    function toggleSidebar() {
+        if (isMobile()) {
+            if (sidebar.classList.contains('open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        } else {
+            if (sidebar.classList.contains('collapsed')) {
+                openSidebar();
+            } else {
+                closeSidebar();
+            }
         }
     }
 
@@ -1390,11 +1467,24 @@ const sidebarJS = `
     }
 
     openBtn.addEventListener('click', openSidebar);
-    closeBtn.addEventListener('click', closeSidebar);
     overlay.addEventListener('click', closeSidebar);
+
+    // Desktop topbar event listeners
+    topbarSidebarBtn.addEventListener('click', toggleSidebar);
+    topbarSearchBtn.addEventListener('click', function() {
+        openSearchPalette();
+    });
+    topbarHelpBtn.addEventListener('click', function() {
+        openShortcutsModal();
+    });
 
     for (var i = 0; i < directories.length; i++) {
         directories[i].addEventListener('click', toggleDirectory);
+    }
+
+    // Initialize sidebar state on desktop (open by default)
+    if (!isMobile() && !sidebar.classList.contains('collapsed')) {
+        topbarSidebarBtn.classList.add('active');
     }
 
     // Set tooltip with keyboard shortcut based on platform
@@ -1402,9 +1492,7 @@ const sidebarJS = `
     var shortcut = isMac ? '⌘B' : 'Ctrl+B';
     var searchShortcut = isMac ? '⌘K' : 'Ctrl+K';
     openBtn.title = 'Open sidebar (' + shortcut + ')';
-    closeBtn.title = 'Close sidebar (' + shortcut + ')';
     searchBtn.title = 'Search files (' + searchShortcut + ')';
-    sidebarSearchBtn.title = 'Search files (' + searchShortcut + ')';
 
     // Initialize file display
     if (window.location.hash) {
@@ -1554,7 +1642,6 @@ const sidebarJS = `
 
     searchOverlay.addEventListener('click', closeSearchPalette);
     searchBtn.addEventListener('click', openSearchPalette);
-    sidebarSearchBtn.addEventListener('click', openSearchPalette);
 
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
@@ -1665,7 +1752,6 @@ const sidebarJS = `
     var copyCommentsBtn = document.querySelector('.copy-comments-btn');
     var openCommentsBtn = document.querySelector('.open-comments-btn');
     var commentCountEl = document.querySelector('.comment-count');
-    var commentsPanelCloseBtn = document.querySelector('.comments-panel-close-btn');
     var commentCancelBtn = document.querySelector('.comment-cancel-btn');
     var commentSaveBtn = document.querySelector('.comment-save-btn');
     var commentsEmpty = document.querySelector('.comments-empty');
@@ -1878,10 +1964,12 @@ const sidebarJS = `
 
     function openCommentsPanel() {
         commentsPanel.classList.add('open');
+        topbarCommentBtn.classList.add('active');
     }
 
     function closeCommentsPanel() {
         commentsPanel.classList.remove('open');
+        topbarCommentBtn.classList.remove('active');
         hideInputForm();
     }
 
@@ -2047,12 +2135,17 @@ const sidebarJS = `
     function updateCommentsUI() {
         var comments = getComments();
         var count = comments.length;
+        // Update mobile comment count
         commentCountEl.textContent = count;
+        // Update topbar comment count
+        topbarCommentCount.textContent = count;
         if (count > 0) {
             commentCountEl.classList.add('visible');
+            topbarCommentCount.classList.add('visible');
             commentsEmpty.style.display = 'none';
         } else {
             commentCountEl.classList.remove('visible');
+            topbarCommentCount.classList.remove('visible');
             commentsEmpty.style.display = 'block';
         }
     }
@@ -2190,13 +2283,23 @@ const sidebarJS = `
         currentSelectedText = '';
     });
 
-    commentsPanelCloseBtn.addEventListener('click', closeCommentsPanel);
     copyCommentsBtn.addEventListener('click', copyCommentsAsMarkdown);
     openCommentsBtn.addEventListener('click', function() {
         if (commentsPanel.classList.contains('open')) {
             closeCommentsPanel();
         } else {
             openCommentsPanel();
+        }
+    });
+
+    // Desktop topbar comment button
+    topbarCommentBtn.addEventListener('click', function() {
+        if (commentsPanel.classList.contains('open')) {
+            closeCommentsPanel();
+            topbarCommentBtn.classList.remove('active');
+        } else {
+            openCommentsPanel();
+            topbarCommentBtn.classList.add('active');
         }
     });
 
