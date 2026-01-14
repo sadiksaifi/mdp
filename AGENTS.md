@@ -22,6 +22,10 @@ make help             # Show all available targets
 # Live reload server
 ./mdp --serve README.md             # Start server on port 8080
 ./mdp --serve --port 3000 ./docs/   # Start server on custom port
+
+# Upgrade
+./mdp upgrade                       # Upgrade to latest version
+./mdp upgrade --force               # Force upgrade even if up to date
 ```
 
 ## Architecture
@@ -40,7 +44,14 @@ internal/
   filetree/           # File tree data structure for sidebar navigation
   browser/            # Platform-specific browser opening
   server/             # Live reload HTTP server with WebSocket support
+  updater/            # Self-update functionality
+    state.go          # State file management (~/.cache/mdp/state.json)
+    github.go         # GitHub API client for releases
+    detect.go         # Installation method detection (brew/curl/source)
+    updater.go        # Update checking and upgrade logic
 assets/               # Original CSS file (also embedded in template package)
+scripts/              # Installation scripts
+  install.sh          # Curl-based installer for macOS/Linux
 ```
 
 **Single-file flow**: Read .md file → Convert to HTML via goldmark (GFM) → Generate HTML document with embedded GitHub CSS → Write to `/tmp/mdpreview-{filename}.html` → Open in browser
@@ -50,6 +61,10 @@ assets/               # Original CSS file (also embedded in template package)
 **Export flow (--output/-O)**: Same as single/multi-file flow, but writes to user-specified path instead of `/tmp/` and skips browser opening
 
 **Live reload flow (--serve)**: Resolve files → Start HTTP server → Watch files with fsnotify → On change: re-convert markdown → Notify clients via WebSocket → Browser auto-refreshes
+
+**Upgrade flow (mdp upgrade)**: Detect install method (brew/curl/source) → If brew: show upgrade instructions → If curl: fetch latest release from GitHub API → Download binary → Replace in place → Update state file
+
+**Auto-update check**: On each `mdp` run → Check if 24h since last check → Query GitHub API (2s timeout, non-blocking) → Cache result → Show notification if update available
 
 **Key implementation details**:
 - CSS and JS are embedded into the binary using `//go:embed` in `internal/template/`
@@ -66,6 +81,8 @@ assets/               # Original CSS file (also embedded in template package)
 - Mobile responsive: sidebar becomes overlay with top bar navigation at ≤768px
 - Fuzzy search palette: Cmd/Ctrl+K opens search, arrow keys or Ctrl+P/N to navigate, Enter to select
 - Keyboard shortcut: Cmd+B (Mac) / Ctrl+B (Win/Linux) toggles sidebar on desktop
+- Update state stored in `~/.cache/mdp/state.json` (version info, last check time)
+- Installation method detected via binary path (Cellar → brew) or marker file (`~/.local/share/mdp/.curl-installed`)
 
 ## Development Guidelines
 

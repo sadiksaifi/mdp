@@ -35,6 +35,14 @@ A fast CLI tool that previews Markdown files in your browser with GitHub-styled 
 brew install sadiksaifi/tap/mdp
 ```
 
+### Curl (macOS/Linux)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sadiksaifi/mdp/main/scripts/install.sh | sh
+```
+
+This installs mdp to `~/.local/bin` and automatically configures your PATH.
+
 ### From Source
 
 ```bash
@@ -49,6 +57,24 @@ make install
 make build
 ./mdp README.md
 ```
+
+---
+
+## Upgrading
+
+### Homebrew
+
+```bash
+brew upgrade sadiksaifi/tap/mdp
+```
+
+### Curl Installation
+
+```bash
+mdp upgrade
+```
+
+mdp automatically checks for updates and notifies you when a new version is available.
 
 ---
 
@@ -72,6 +98,13 @@ mdp --serve --port 3000 <dir>    # Live reload on custom port
 | `--port <port>` | Port for live reload server (default: `8080`) |
 | `-h, --help` | Show help message |
 | `-v, --version` | Show version |
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `upgrade` | Upgrade mdp to the latest version |
+| `upgrade --force` | Force upgrade even if already up to date |
 
 ---
 
