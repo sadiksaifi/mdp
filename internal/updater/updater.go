@@ -218,7 +218,16 @@ func handleCurlUpgrade(currentVersion string, force bool) error {
 }
 
 func downloadFile(url, destPath string) error {
-	resp, err := http.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
