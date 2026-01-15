@@ -11,16 +11,26 @@ permissions:
 jobs:
   build:
     name: Build
-    runs-on: macos-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
         include:
           - goos: darwin
             goarch: amd64
             name: darwin-amd64
+            runner: macos-latest
           - goos: darwin
             goarch: arm64
             name: darwin-arm64
+            runner: macos-latest
+          - goos: linux
+            goarch: amd64
+            name: linux-amd64
+            runner: ubuntu-latest
+          - goos: linux
+            goarch: arm64
+            name: linux-arm64
+            runner: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,6 +65,8 @@ jobs:
     outputs:
       sha256_darwin_amd64: ${{ steps.sha256.outputs.darwin_amd64 }}
       sha256_darwin_arm64: ${{ steps.sha256.outputs.darwin_arm64 }}
+      sha256_linux_amd64: ${{ steps.sha256.outputs.linux_amd64 }}
+      sha256_linux_arm64: ${{ steps.sha256.outputs.linux_arm64 }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -73,6 +85,8 @@ jobs:
           cd artifacts
           echo "darwin_amd64=$(sha256sum mdp-darwin-amd64.tar.gz | cut -d ' ' -f1)" >> $GITHUB_OUTPUT
           echo "darwin_arm64=$(sha256sum mdp-darwin-arm64.tar.gz | cut -d ' ' -f1)" >> $GITHUB_OUTPUT
+          echo "linux_amd64=$(sha256sum mdp-linux-amd64.tar.gz | cut -d ' ' -f1)" >> $GITHUB_OUTPUT
+          echo "linux_arm64=$(sha256sum mdp-linux-arm64.tar.gz | cut -d ' ' -f1)" >> $GITHUB_OUTPUT
 
       - name: Generate changelog
         uses: orhun/git-cliff-action@v4
