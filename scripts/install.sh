@@ -91,9 +91,9 @@ get_latest_version() {
     local api_url="https://api.github.com/repos/${REPO}/releases/latest"
 
     if command -v curl >/dev/null 2>&1; then
-        VERSION=$(curl -fsSL "$api_url" | grep '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')
+        VERSION=$(curl -fsSL "$api_url" | grep -o '"tag_name": *"[^"]*"' | head -1 | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
     else
-        VERSION=$(wget -qO- "$api_url" | grep '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')
+        VERSION=$(wget -qO- "$api_url" | grep -o '"tag_name": *"[^"]*"' | head -1 | sed 's/.*"tag_name": *"\([^"]*\)".*/\1/')
     fi
 
     if [ -z "$VERSION" ]; then
