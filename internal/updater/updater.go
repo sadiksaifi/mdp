@@ -282,11 +282,11 @@ func extractTarGz(archivePath, destDir string) error {
 			return err
 		}
 
-		if _, err := io.Copy(outFile, tr); err != nil {
-			outFile.Close()
-			return err
-		}
+		_, copyErr := io.Copy(outFile, tr)
 		outFile.Close()
+		if copyErr != nil {
+			return copyErr
+		}
 	}
 
 	return nil
