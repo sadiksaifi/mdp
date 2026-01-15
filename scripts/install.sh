@@ -143,7 +143,7 @@ download_and_install() {
     # Create marker file for installation method detection
     mkdir -p "$DATA_DIR"
     cat > "${DATA_DIR}/.curl-installed" << EOF
-installed=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+installed=$(date +%s)
 version=${VERSION}
 EOF
 
