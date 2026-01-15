@@ -276,7 +276,12 @@ func extractTarGz(archivePath, destDir string) error {
 			continue
 		}
 
-		target := filepath.Join(destDir, header.Name)
+		// Prevent path traversal
+		if strings.Contains(header.Name, "..") || filepath.IsAbs(header.Name) {
+			return fmt.Errorf("archive contains invalid path: %s", header.Name)
+		}
+
+		target := filepath.Join(destDir, filepath.Clean(header.Name))
 		outFile, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 		if err != nil {
 			return err
