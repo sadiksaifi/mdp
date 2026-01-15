@@ -17,6 +17,7 @@ import (
 	"mdp/internal/filetree"
 	"mdp/internal/server"
 	"mdp/internal/template"
+	"mdp/internal/updater"
 )
 
 var version = "dev"
@@ -29,8 +30,8 @@ func main() {
 }
 
 func run(args []string) error {
-	// Handle help and version before flag parsing
-	if len(args) == 1 {
+	// Handle subcommands and flags before flag parsing
+	if len(args) >= 1 {
 		switch args[0] {
 		case "-h", "--help":
 			printUsage()
@@ -38,7 +39,15 @@ func run(args []string) error {
 		case "-v", "--version":
 			fmt.Printf("mdp %s\n", version)
 			return nil
+		case "upgrade":
+			return runUpgrade(args[1:])
 		}
+	}
+
+	// Check for updates (non-blocking, 2s timeout)
+	if info := updater.CheckForUpdateQuick(version); info != nil && info.HasUpdate {
+		fmt.Fprintf(os.Stderr, "A new version of mdp is available: %s → %s\n", version, info.LatestVersion)
+		fmt.Fprintf(os.Stderr, "Run 'mdp upgrade' to update\n\n")
 	}
 
 	// Setup flags
@@ -102,6 +111,33 @@ func runServe(files []string, port int) error {
 	}
 
 	return srv.Start()
+}
+
+// runUpgrade handles the 'mdp upgrade' subcommand.
+func runUpgrade(args []string) error {
+	// Handle help flag for upgrade command
+	for _, arg := range args {
+		if arg == "-h" || arg == "--help" {
+			fmt.Println(`Usage: mdp upgrade [options]
+
+Upgrade mdp to the latest version.
+
+Options:
+  --force    Force upgrade even if already up to date
+  -h, --help Show this help message`)
+			return nil
+		}
+	}
+
+	fs := flag.NewFlagSet("upgrade", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	forceFlag := fs.Bool("force", false, "Force upgrade even if up to date")
+
+	if err := fs.Parse(args); err != nil {
+		return fmt.Errorf("invalid flag: %v", err)
+	}
+
+	return updater.PerformUpgrade(version, *forceFlag)
 }
 
 // resolveFiles expands directories and validates all paths.
@@ -366,6 +402,7 @@ Usage:
   mdp <file.md>                Preview single markdown file
   mdp <file1.md> <file2.md>    Preview multiple files with sidebar
   mdp <directory>              Preview all .md files in directory
+  mdp upgrade                  Upgrade mdp to the latest version
   mdp -h, --help               Show this help message
   mdp -v, --version            Show version
 
@@ -374,11 +411,15 @@ Options:
   --serve                      Start live reload server instead of opening browser
   --port <port>                Port for live reload server (default: 8080)
 
+Upgrade Options:
+  --force                      Force upgrade even if already up to date
+
 Examples:
   mdp README.md                Preview single file
   mdp docs/                    Preview all markdown in docs/
   mdp README.md CHANGELOG.md   Preview multiple files with sidebar
   mdp -O site.html docs/       Convert docs to single HTML file
   mdp --serve README.md        Start live reload server for single file
-  mdp --serve --port 3000 .    Live reload all markdown in current directory`)
+  mdp --serve --port 3000 .    Live reload all markdown in current directory
+  mdp upgrade                  Upgrade to the latest version`)
 }
