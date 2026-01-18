@@ -16,6 +16,7 @@ import (
 	"mdp/internal/browser"
 	"mdp/internal/converter"
 	"mdp/internal/filetree"
+	"mdp/internal/linkrewriter"
 	"mdp/internal/template"
 )
 
@@ -267,6 +268,12 @@ func (s *Server) regenerateMultiFile() error {
 			RelPath: relPath,
 			Content: htmlContent,
 		})
+	}
+
+	// Rewrite relative .md links to fragment identifiers
+	rewriter := linkrewriter.New(entries)
+	for i := range entries {
+		entries[i].Content = rewriter.RewriteLinks(entries[i].Content, entries[i].RelPath)
 	}
 
 	tree := filetree.BuildTree(entries)

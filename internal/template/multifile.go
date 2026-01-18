@@ -1466,6 +1466,26 @@ const sidebarJS = `
         });
     }
 
+    // Handle clicks on internal links within content (rewritten .md links)
+    document.addEventListener('click', function(e) {
+        var link = e.target.closest('a[href^="#"]');
+        if (!link) return;
+
+        // Skip sidebar links (they have data-file attribute)
+        if (link.dataset.file) return;
+
+        var fileId = link.getAttribute('href').slice(1);
+        // Check if this ID matches a file section
+        for (var i = 0; i < fileLinks.length; i++) {
+            if (fileLinks[i].dataset.file === fileId) {
+                e.preventDefault();
+                showFile(fileId);
+                return;
+            }
+        }
+        // If not a file section, let the browser handle it (regular anchor)
+    });
+
     openBtn.addEventListener('click', openSidebar);
     overlay.addEventListener('click', closeSidebar);
 
