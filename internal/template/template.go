@@ -868,6 +868,117 @@ const commentsCSS = `
         display: flex;
     }
 }
+
+/* Print Styles - Minimal PDF Output */
+@media print {
+    @page {
+        margin: 20mm;
+    }
+
+    /* Hide ALL UI elements */
+    .topbar,
+    .sidebar,
+    .sidebar-overlay,
+    .floating-buttons,
+    .search-palette-overlay,
+    .search-palette,
+    .github-link,
+    .comment-btn,
+    .open-comments-btn,
+    .comments-panel,
+    .shortcuts-modal-overlay,
+    .shortcuts-modal,
+    .code-copy-btn,
+    .code-block-wrapper .code-copy-btn {
+        display: none !important;
+    }
+
+    /* Reset layout */
+    body {
+        display: block !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        background: white !important;
+    }
+
+    .content {
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+
+    .markdown-body {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 12pt !important;
+        background: white !important;
+        color: black !important;
+    }
+
+    /* Code blocks */
+    pre {
+        background: #f6f8fa !important;
+        border: 1px solid #e1e4e8 !important;
+        border-radius: 6px !important;
+        padding: 16px !important;
+        overflow-x: visible !important;
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        page-break-inside: avoid;
+    }
+
+    code {
+        background: transparent !important;
+        color: #24292e !important;
+    }
+
+    .code-block-wrapper {
+        position: relative !important;
+        page-break-inside: avoid;
+    }
+
+    /* Mermaid diagrams */
+    .mermaid-wrapper {
+        page-break-inside: avoid;
+        background: white !important;
+    }
+
+    .mermaid-wrapper svg {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    .mermaid-source {
+        display: none !important;
+    }
+
+    /* Links */
+    a {
+        color: #0969da !important;
+        text-decoration: underline !important;
+    }
+
+    /* Images */
+    img {
+        max-width: 100% !important;
+        page-break-inside: avoid;
+    }
+
+    /* Tables */
+    table {
+        page-break-inside: avoid;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+        color: black !important;
+    }
+}
 `
 
 const htmlTemplate = `<!DOCTYPE html>
@@ -956,6 +1067,10 @@ const htmlTemplate = `<!DOCTYPE html>
             <div class="topbar-divider"></div>
             <button class="topbar-btn topbar-help-btn" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </button>
+            <div class="topbar-divider"></div>
+            <button class="topbar-btn topbar-download-btn" aria-label="Download as PDF" title="Download as PDF (⌘P)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
             </button>
         </div>
     </header>
@@ -1100,33 +1215,62 @@ const mermaidScript = `
                             });
                     });
 
+                    // Helper function to re-render all diagrams with a specific theme
+                    function rerenderAllDiagrams(theme, idPrefix, callback) {
+                        mermaid.initialize({
+                            startOnLoad: false,
+                            theme: theme,
+                            securityLevel: 'loose'
+                        });
+
+                        var wrappers = document.querySelectorAll('.mermaid-wrapper');
+                        var total = wrappers.length;
+                        var completed = 0;
+
+                        if (total === 0) {
+                            if (callback) callback();
+                            return;
+                        }
+
+                        wrappers.forEach(function(wrapper, index) {
+                            var source = wrapper.dataset.source;
+                            var rendered = wrapper.querySelector('.mermaid-rendered');
+                            var newId = idPrefix + '-' + Date.now() + '-' + index;
+
+                            mermaid.render(newId, source)
+                                .then(function(result) {
+                                    rendered.innerHTML = result.svg;
+                                })
+                                .catch(function(err) {
+                                    rendered.innerHTML = '<div class="mermaid-error">Error rendering diagram: ' + err.message + '</div>';
+                                })
+                                .finally(function() {
+                                    completed++;
+                                    if (completed === total && callback) {
+                                        callback();
+                                    }
+                                });
+                        });
+                    }
+
                     // Listen for theme changes and re-render diagrams
                     if (window.matchMedia) {
                         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
                             var newTheme = isDarkMode() ? 'dark' : 'default';
-                            mermaid.initialize({
-                                startOnLoad: false,
-                                theme: newTheme,
-                                securityLevel: 'loose'
-                            });
-
-                            // Re-render all diagrams
-                            var wrappers = document.querySelectorAll('.mermaid-wrapper');
-                            wrappers.forEach(function(wrapper, index) {
-                                var source = wrapper.dataset.source;
-                                var rendered = wrapper.querySelector('.mermaid-rendered');
-                                var newId = 'mermaid-rerender-' + Date.now() + '-' + index;
-
-                                mermaid.render(newId, source)
-                                    .then(function(result) {
-                                        rendered.innerHTML = result.svg;
-                                    })
-                                    .catch(function(err) {
-                                        rendered.innerHTML = '<div class="mermaid-error">Error rendering diagram: ' + err.message + '</div>';
-                                    });
-                            });
+                            rerenderAllDiagrams(newTheme, 'mermaid-theme');
                         });
                     }
+
+                    // Expose print helpers for manual print triggering
+                    window.mdpPrintHelpers = {
+                        rerenderForPrint: function(callback) {
+                            rerenderAllDiagrams('default', 'mermaid-print', callback);
+                        },
+                        restoreAfterPrint: function() {
+                            var currentTheme = isDarkMode() ? 'dark' : 'default';
+                            rerenderAllDiagrams(currentTheme, 'mermaid-restore');
+                        }
+                    };
                 })
                 .catch(function(err) {
                     console.error('Failed to load Mermaid.js:', err);
@@ -1681,6 +1825,27 @@ const commentsJS = `
                 openShortcutsModal();
             });
 
+            // Mermaid print helpers - will be set by mermaid script if diagrams exist
+            window.mdpPrintHelpers = window.mdpPrintHelpers || {
+                rerenderForPrint: function(callback) { callback(); },
+                restoreAfterPrint: function() {}
+            };
+
+            // Download as PDF button
+            var topbarDownloadBtn = document.querySelector('.topbar-download-btn');
+            if (topbarDownloadBtn) {
+                topbarDownloadBtn.addEventListener('click', function() {
+                    window.mdpPrintHelpers.rerenderForPrint(function() {
+                        window.print();
+                    });
+                });
+            }
+
+            // Restore mermaid theme after printing
+            window.addEventListener('afterprint', function() {
+                window.mdpPrintHelpers.restoreAfterPrint();
+            });
+
             // Click on highlight to show comment
             document.addEventListener('click', function(e) {
                 var highlight = e.target.closest('.comment-highlight');
@@ -1833,6 +1998,10 @@ const commentsHTML = `
                 <div class="shortcut-row">
                     <span class="shortcut-action">Save comment</span>
                     <span class="shortcut-keys"><kbd>⌘</kbd><kbd>↵</kbd></span>
+                </div>
+                <div class="shortcut-row">
+                    <span class="shortcut-action">Download as PDF</span>
+                    <span class="shortcut-keys"><kbd>⌘</kbd><kbd>P</kbd></span>
                 </div>
             </div>
         </div>
