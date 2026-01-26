@@ -1610,7 +1610,7 @@ const sidebarJS = `
 
     var isInitialLoad = true;
 
-    function showFile(fileId) {
+    function showFile(fileId, skipHistory) {
         for (var i = 0; i < contentSections.length; i++) {
             if (contentSections[i].id === fileId) {
                 contentSections[i].classList.add('active');
@@ -1631,7 +1631,13 @@ const sidebarJS = `
             closeSidebar();
         }
 
-        history.replaceState(null, '', '#' + fileId);
+        if (skipHistory) {
+            // Initial load or popstate - don't add to history
+            history.replaceState({ fileId: fileId }, '', '#' + fileId);
+        } else {
+            // User navigation - add to history
+            history.pushState({ fileId: fileId }, '', '#' + fileId);
+        }
 
         if (isInitialLoad) {
             isInitialLoad = false;
@@ -1833,13 +1839,32 @@ const sidebarJS = `
             }
         }
         if (exists) {
-            showFile(fileId);
+            showFile(fileId, true);
         } else if (fileLinks.length > 0) {
-            showFile(fileLinks[0].dataset.file);
+            showFile(fileLinks[0].dataset.file, true);
         }
     } else if (fileLinks.length > 0) {
-        showFile(fileLinks[0].dataset.file);
+        showFile(fileLinks[0].dataset.file, true);
     }
+
+    // Handle browser back/forward navigation
+    window.addEventListener('popstate', function(e) {
+        var fileId;
+        if (e.state && e.state.fileId) {
+            fileId = e.state.fileId;
+        } else if (window.location.hash) {
+            fileId = window.location.hash.slice(1);
+        }
+        if (fileId) {
+            // Verify the file exists
+            for (var i = 0; i < fileLinks.length; i++) {
+                if (fileLinks[i].dataset.file === fileId) {
+                    showFile(fileId, true);
+                    return;
+                }
+            }
+        }
+    });
 
     // Search Palette
     var searchOverlay = document.getElementById('search-overlay');
