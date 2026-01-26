@@ -1725,6 +1725,10 @@ const sidebarJS = `
     var checkIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
 
     document.querySelectorAll('.markdown-body pre').forEach(function(pre) {
+        // Skip mermaid code blocks (they get their own UI)
+        var code = pre.querySelector('code');
+        if (code && code.classList.contains('language-mermaid')) return;
+
         var wrapper = document.createElement('div');
         wrapper.className = 'code-block-wrapper';
         pre.parentNode.insertBefore(wrapper, pre);
@@ -2423,6 +2427,119 @@ const multiFileLiveReloadScript = `
         })();
     </script>`
 
+const multiFileMermaidScript = `
+    <script type="module">
+        (function() {
+            'use strict';
+
+            // Find all mermaid code blocks
+            var mermaidBlocks = document.querySelectorAll('.markdown-body pre code.language-mermaid');
+            if (mermaidBlocks.length === 0) return;
+
+            // Detect dark mode
+            function isDarkMode() {
+                return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+
+            // Dynamic import of Mermaid.js from CDN
+            import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')
+                .then(function(module) {
+                    var mermaid = module.default;
+
+                    // Initialize mermaid with theme based on system preference
+                    var theme = isDarkMode() ? 'dark' : 'default';
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        theme: theme,
+                        securityLevel: 'loose'
+                    });
+
+                    var diagramCounter = 0;
+
+                    // Process each mermaid block
+                    mermaidBlocks.forEach(function(codeEl) {
+                        var preEl = codeEl.parentElement;
+                        var source = codeEl.textContent;
+                        var diagramId = 'mermaid-diagram-' + (++diagramCounter);
+
+                        // Create wrapper structure
+                        var wrapper = document.createElement('div');
+                        wrapper.className = 'mermaid-wrapper';
+                        wrapper.dataset.source = source;
+                        wrapper.dataset.diagramId = diagramId;
+
+                        var rendered = document.createElement('div');
+                        rendered.className = 'mermaid-rendered';
+
+                        var details = document.createElement('details');
+                        details.className = 'mermaid-source';
+                        var summary = document.createElement('summary');
+                        summary.textContent = 'View source';
+                        var sourcePre = document.createElement('pre');
+                        var sourceCode = document.createElement('code');
+                        sourceCode.className = 'language-mermaid';
+                        sourceCode.textContent = source;
+                        sourcePre.appendChild(sourceCode);
+                        details.appendChild(summary);
+                        details.appendChild(sourcePre);
+
+                        wrapper.appendChild(rendered);
+                        wrapper.appendChild(details);
+
+                        // Replace original pre with wrapper
+                        preEl.parentNode.replaceChild(wrapper, preEl);
+
+                        // Render the diagram
+                        mermaid.render(diagramId, source)
+                            .then(function(result) {
+                                rendered.innerHTML = result.svg;
+                            })
+                            .catch(function(err) {
+                                rendered.innerHTML = '<div class="mermaid-error">Error rendering diagram: ' + err.message + '</div>';
+                            });
+                    });
+
+                    // Listen for theme changes and re-render diagrams
+                    if (window.matchMedia) {
+                        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+                            var newTheme = isDarkMode() ? 'dark' : 'default';
+                            mermaid.initialize({
+                                startOnLoad: false,
+                                theme: newTheme,
+                                securityLevel: 'loose'
+                            });
+
+                            // Re-render all diagrams
+                            var wrappers = document.querySelectorAll('.mermaid-wrapper');
+                            wrappers.forEach(function(wrapper, index) {
+                                var source = wrapper.dataset.source;
+                                var rendered = wrapper.querySelector('.mermaid-rendered');
+                                var newId = 'mermaid-rerender-' + Date.now() + '-' + index;
+
+                                mermaid.render(newId, source)
+                                    .then(function(result) {
+                                        rendered.innerHTML = result.svg;
+                                    })
+                                    .catch(function(err) {
+                                        rendered.innerHTML = '<div class="mermaid-error">Error rendering diagram: ' + err.message + '</div>';
+                                    });
+                            });
+                        });
+                    }
+                })
+                .catch(function(err) {
+                    console.error('Failed to load Mermaid.js:', err);
+                    mermaidBlocks.forEach(function(codeEl) {
+                        var preEl = codeEl.parentElement;
+                        var errorDiv = document.createElement('div');
+                        errorDiv.className = 'mermaid-error';
+                        errorDiv.textContent = 'Failed to load Mermaid.js: ' + err.message;
+                        preEl.parentNode.replaceChild(errorDiv, preEl);
+                    });
+                });
+        })();
+    </script>`
+
 // GenerateMulti creates an HTML document with sidebar navigation for multiple files.
 func GenerateMulti(title string, tree *filetree.TreeNode, files []filetree.FileEntry) string {
 	sidebarHTML := generateSidebarHTML(tree)
@@ -2436,7 +2553,7 @@ func GenerateMulti(title string, tree *filetree.TreeNode, files []filetree.FileE
 		sidebarHTML,
 		contentHTML,
 		sidebarJS,
-		"", // No live reload script
+		multiFileMermaidScript,
 	)
 }
 
@@ -2454,7 +2571,7 @@ func GenerateMultiWithLiveReload(title string, tree *filetree.TreeNode, files []
 		sidebarHTML,
 		contentHTML,
 		sidebarJS,
-		liveReloadScript,
+		multiFileMermaidScript+liveReloadScript,
 	)
 }
 

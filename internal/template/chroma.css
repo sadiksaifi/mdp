@@ -261,3 +261,79 @@
         background: var(--bgColor-muted, #161b22);
     }
 }
+
+/* Mermaid diagram styles */
+.markdown-body .mermaid-wrapper {
+    margin: 16px 0;
+    border-radius: 6px;
+    background-color: var(--bgColor-muted, #f6f8fa);
+    overflow: hidden;
+}
+
+.markdown-body .mermaid-rendered {
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    overflow-x: auto;
+}
+
+.markdown-body .mermaid-rendered svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.markdown-body .mermaid-source {
+    border-top: 1px solid var(--borderColor-default, #d0d7de);
+}
+
+.markdown-body .mermaid-source summary {
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--fgColor-muted, #656d76);
+    cursor: pointer;
+    user-select: none;
+}
+
+.markdown-body .mermaid-source summary:hover {
+    color: var(--fgColor-default, #1f2328);
+    background-color: var(--bgColor-default, #ffffff);
+}
+
+.markdown-body .mermaid-source pre {
+    margin: 0;
+    border-radius: 0;
+}
+
+.markdown-body .mermaid-error {
+    padding: 16px;
+    color: var(--fgColor-danger, #cf222e);
+    background-color: var(--bgColor-danger-muted, #ffebe9);
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+@media (prefers-color-scheme: dark) {
+    .markdown-body .mermaid-wrapper {
+        background-color: var(--bgColor-muted, #161b22);
+    }
+
+    .markdown-body .mermaid-source {
+        border-top-color: var(--borderColor-default, #30363d);
+    }
+
+    .markdown-body .mermaid-source summary {
+        color: var(--fgColor-muted, #8b949e);
+    }
+
+    .markdown-body .mermaid-source summary:hover {
+        color: var(--fgColor-default, #e6edf3);
+        background-color: var(--bgColor-default, #0d1117);
+    }
+
+    .markdown-body .mermaid-error {
+        color: var(--fgColor-danger, #f85149);
+        background-color: var(--bgColor-danger-muted, #490202);
+    }
+}

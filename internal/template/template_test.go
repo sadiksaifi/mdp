@@ -3,6 +3,8 @@ package template
 import (
 	"strings"
 	"testing"
+
+	"mdp/internal/filetree"
 )
 
 func TestGenerate_ContainsTitle(t *testing.T) {
@@ -230,5 +232,214 @@ func TestGenerate_CommentsEmptyState(t *testing.T) {
 		if !strings.Contains(result, check) {
 			t.Errorf("expected empty state element %q in output", check)
 		}
+	}
+}
+
+func TestGenerate_MermaidScriptIncluded(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	// Check that mermaid script is included
+	if !strings.Contains(result, "language-mermaid") {
+		t.Error("expected mermaid language class detection in output")
+	}
+
+	if !strings.Contains(result, "mermaid.esm.min.mjs") {
+		t.Error("expected Mermaid.js CDN import in output")
+	}
+}
+
+func TestGenerate_MermaidCSSIncluded(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	// Check for mermaid CSS classes
+	checks := []string{
+		".mermaid-wrapper",
+		".mermaid-rendered",
+		".mermaid-source",
+		".mermaid-error",
+	}
+
+	for _, check := range checks {
+		if !strings.Contains(result, check) {
+			t.Errorf("expected mermaid CSS class %q in output", check)
+		}
+	}
+}
+
+func TestGenerate_MermaidCSSThemeSupport(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	// Check for mermaid dark mode CSS
+	if !strings.Contains(result, ".mermaid-wrapper") {
+		t.Error("expected mermaid wrapper class in CSS")
+	}
+
+	// The dark mode CSS for mermaid should be in the chroma.css
+	if !strings.Contains(result, ".mermaid-error") {
+		t.Error("expected mermaid error class in CSS")
+	}
+}
+
+func TestGenerate_CopyButtonSkipsMermaid(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	// Check that the copy button script has the mermaid skip logic
+	if !strings.Contains(result, "language-mermaid") {
+		t.Error("expected mermaid skip logic in copy button script")
+	}
+
+	// Check that the skip logic exists
+	if !strings.Contains(result, "classList.contains('language-mermaid')") {
+		t.Error("expected classList check for mermaid in copy button script")
+	}
+}
+
+func TestGenerate_MermaidJavaScript(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	// Check for key mermaid JS functions and features
+	checks := []string{
+		"isDarkMode",
+		"mermaid-wrapper",
+		"mermaid-rendered",
+		"mermaid.render",
+		"prefers-color-scheme",
+	}
+
+	for _, check := range checks {
+		if !strings.Contains(result, check) {
+			t.Errorf("expected %q in mermaid JavaScript", check)
+		}
+	}
+}
+
+func TestGenerateWithLiveReload_MermaidIncluded(t *testing.T) {
+	result := GenerateWithLiveReload("Test", "<p>Content</p>", 8080)
+
+	// Check that mermaid is included in live reload mode
+	if !strings.Contains(result, "mermaid.esm.min.mjs") {
+		t.Error("expected Mermaid.js CDN import in live reload output")
+	}
+
+	if !strings.Contains(result, ".mermaid-wrapper") {
+		t.Error("expected mermaid CSS in live reload output")
+	}
+}
+
+func TestGenerateMulti_MermaidIncluded(t *testing.T) {
+	tree := &filetree.TreeNode{
+		Name:  "root",
+		IsDir: true,
+		Children: []*filetree.TreeNode{
+			{
+				Name:  "test.md",
+				IsDir: false,
+				File: &filetree.FileEntry{
+					ID:   "test-md",
+					Name: "test.md",
+					Path: "test.md",
+				},
+			},
+		},
+	}
+	files := []filetree.FileEntry{
+		{
+			ID:      "test-md",
+			Name:    "test.md",
+			Path:    "test.md",
+			Content: "<p>Content</p>",
+		},
+	}
+
+	result := GenerateMulti("Test", tree, files)
+
+	// Check that mermaid script is included
+	if !strings.Contains(result, "mermaid.esm.min.mjs") {
+		t.Error("expected Mermaid.js CDN import in multifile output")
+	}
+
+	// Check that mermaid CSS classes are included
+	checks := []string{
+		".mermaid-wrapper",
+		".mermaid-rendered",
+		".mermaid-source",
+		".mermaid-error",
+	}
+
+	for _, check := range checks {
+		if !strings.Contains(result, check) {
+			t.Errorf("expected mermaid CSS class %q in multifile output", check)
+		}
+	}
+}
+
+func TestGenerateMulti_CopyButtonSkipsMermaid(t *testing.T) {
+	tree := &filetree.TreeNode{
+		Name:  "root",
+		IsDir: true,
+		Children: []*filetree.TreeNode{
+			{
+				Name:  "test.md",
+				IsDir: false,
+				File: &filetree.FileEntry{
+					ID:   "test-md",
+					Name: "test.md",
+					Path: "test.md",
+				},
+			},
+		},
+	}
+	files := []filetree.FileEntry{
+		{
+			ID:      "test-md",
+			Name:    "test.md",
+			Path:    "test.md",
+			Content: "<p>Content</p>",
+		},
+	}
+
+	result := GenerateMulti("Test", tree, files)
+
+	// Check that the copy button script has the mermaid skip logic
+	if !strings.Contains(result, "classList.contains('language-mermaid')") {
+		t.Error("expected classList check for mermaid in multifile copy button script")
+	}
+}
+
+func TestGenerateMultiWithLiveReload_MermaidIncluded(t *testing.T) {
+	tree := &filetree.TreeNode{
+		Name:  "root",
+		IsDir: true,
+		Children: []*filetree.TreeNode{
+			{
+				Name:  "test.md",
+				IsDir: false,
+				File: &filetree.FileEntry{
+					ID:   "test-md",
+					Name: "test.md",
+					Path: "test.md",
+				},
+			},
+		},
+	}
+	files := []filetree.FileEntry{
+		{
+			ID:      "test-md",
+			Name:    "test.md",
+			Path:    "test.md",
+			Content: "<p>Content</p>",
+		},
+	}
+
+	result := GenerateMultiWithLiveReload("Test", tree, files, 8080)
+
+	// Check that mermaid is included in live reload mode
+	if !strings.Contains(result, "mermaid.esm.min.mjs") {
+		t.Error("expected Mermaid.js CDN import in multifile live reload output")
+	}
+
+	// Check that live reload script is also included
+	if !strings.Contains(result, "WebSocket") {
+		t.Error("expected WebSocket in multifile live reload output")
 	}
 }
