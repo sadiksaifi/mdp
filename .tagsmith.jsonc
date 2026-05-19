@@ -1,0 +1,22 @@
+{
+  "$schema": "https://tagsmith.sadiksaifi.dev/schema/v1.json",
+  "configVersion": 1,
+
+  "git": {
+    "remote": "origin",
+    "baseBranch": "main",
+  },
+
+  "defaults": {
+    "tagPattern": "v{version}",
+    "tagMessage": "Release v{version}",
+    "initialVersion": "3.2.0",
+  },
+
+  "targets": {
+    "mdp": {
+      "path": ".",
+      "channels": [{ "name": "stable", "strategy": "stable" }],
+    },
+  },
+}

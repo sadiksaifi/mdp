@@ -6,11 +6,38 @@ on:
       - 'v*'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
+  validate:
+    name: Validate release tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      target: ${{ steps.tagsmith.outputs.target }}
+      channel: ${{ steps.tagsmith.outputs.channel }}
+      strategy: ${{ steps.tagsmith.outputs.strategy }}
+      version: ${{ steps.tagsmith.outputs.version }}
+      base-version: ${{ steps.tagsmith.outputs.baseVersion }}
+      tag: ${{ steps.tagsmith.outputs.tag }}
+      tag-message: ${{ steps.tagsmith.outputs.tagMessage }}
+      commit: ${{ steps.tagsmith.outputs.commit }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags and remote branches
+        run: git fetch --force --tags origin '+refs/heads/*:refs/remotes/origin/*'
+
+      - name: Validate release tag
+        id: tagsmith
+        run: npx tagsmith@latest validate --tag "$GITHUB_REF_NAME" --github-output
+
   build:
     name: Build
+    needs: validate
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
@@ -32,8 +59,10 @@ jobs:
             name: linux-arm64
             runner: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout validated commit
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.validate.outputs.commit }}
 
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -44,8 +73,8 @@ jobs:
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
+          VERSION: ${{ needs.validate.outputs.version }}
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
           go build -ldflags "-X main.version=${VERSION}" -o mdp ./cmd/mdp
 
       - name: Create archive
@@ -60,17 +89,20 @@ jobs:
 
   release:
     name: Release
-    needs: build
+    needs: [validate, build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       sha256_darwin_amd64: ${{ steps.sha256.outputs.darwin_amd64 }}
       sha256_darwin_arm64: ${{ steps.sha256.outputs.darwin_arm64 }}
       sha256_linux_amd64: ${{ steps.sha256.outputs.linux_amd64 }}
       sha256_linux_arm64: ${{ steps.sha256.outputs.linux_arm64 }}
     steps:
-      - name: Checkout
+      - name: Checkout validated commit
         uses: actions/checkout@v4
         with:
+          ref: ${{ needs.validate.outputs.commit }}
           fetch-depth: 0
 
       - name: Download artifacts
@@ -100,12 +132,14 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ needs.validate.outputs.tag }}
+          target_commitish: ${{ needs.validate.outputs.commit }}
           files: artifacts/*.tar.gz
           body: ${{ steps.changelog.outputs.content }}
 
   update-homebrew:
     name: Update Homebrew Tap
-    needs: release
+    needs: [validate, release]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout homebrew-tap
@@ -117,7 +151,7 @@ jobs:
 
       - name: Update formula
         env:
-          VERSION: ${{ github.ref_name }}
+          VERSION: ${{ needs.validate.outputs.tag }}
           SHA256_AMD64: ${{ needs.release.outputs.sha256_darwin_amd64 }}
           SHA256_ARM64: ${{ needs.release.outputs.sha256_darwin_arm64 }}
         run: |
@@ -155,7 +189,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add Formula/mdp.rb
-          git commit -m "release: mdp version ${{ github.ref_name }}
+          git commit -m "release: mdp version ${{ needs.validate.outputs.tag }}
 
-          Release: https://github.com/sadiksaifi/mdp/releases/tag/${{ github.ref_name }}"
+          Release: https://github.com/sadiksaifi/mdp/releases/tag/${{ needs.validate.outputs.tag }}"
           git push
