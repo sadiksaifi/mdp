@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestIsNewerVersion(t *testing.T) {
@@ -221,5 +222,5 @@ func TestCheckForUpdateWithContext_UsesCachedState(t *testing.T) {
 
 // jsonTime returns current time in JSON format for test fixtures
 func jsonTime() string {
-	return `2026-01-15T10:00:00Z` // Recent time that's within 24h
+	return time.Now().UTC().Format(time.RFC3339)
 }

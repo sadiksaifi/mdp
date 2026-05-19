@@ -210,6 +210,18 @@ assets/               # CSS assets
 | `make release` | Build for all platforms |
 | `make clean` | Remove build artifacts |
 
+### Releases
+
+Releases are managed by [Tagsmith](https://tagsmith.sadiksaifi.dev/) using the repo's `.tagsmith.jsonc` config.
+
+```bash
+npx tagsmith@latest targets
+npx tagsmith@latest tag --channel stable --bump patch --dry-run --json
+npx tagsmith@latest tag --channel stable --bump patch --push
+```
+
+Tagsmith-created annotated `v*` tags are validated in CI before release artifacts and the Homebrew tap update are published.
+
 ### Running Tests
 
 ```bash
