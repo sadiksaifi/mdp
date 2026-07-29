@@ -27,6 +27,9 @@ release: ## Build release binaries for multiple platforms
 	GOOS=darwin GOARCH=amd64 go build -o $(DIST_DIR)/$(BINARY)-darwin-amd64 $(CMD_DIR)
 	GOOS=darwin GOARCH=arm64 go build -o $(DIST_DIR)/$(BINARY)-darwin-arm64 $(CMD_DIR)
 	GOOS=linux GOARCH=amd64 go build -o $(DIST_DIR)/$(BINARY)-linux-amd64 $(CMD_DIR)
+	GOOS=linux GOARCH=arm64 go build -o $(DIST_DIR)/$(BINARY)-linux-arm64 $(CMD_DIR)
+	GOOS=windows GOARCH=amd64 go build -o $(DIST_DIR)/$(BINARY)-windows-amd64.exe $(CMD_DIR)
+	GOOS=windows GOARCH=arm64 go build -o $(DIST_DIR)/$(BINARY)-windows-arm64.exe $(CMD_DIR)
 	@echo "Release binaries built in $(DIST_DIR)/"
 
 clean: ## Remove built artifacts

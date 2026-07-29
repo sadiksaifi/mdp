@@ -24,6 +24,15 @@ import (
 var version = "dev"
 
 func main() {
+	handled, err := updater.RunUpgradeHelper()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Windows upgrade failed: %v\n", err)
+		os.Exit(1)
+	}
+	if handled {
+		return
+	}
+
 	if err := run(os.Args[1:]); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
@@ -239,7 +248,7 @@ func isIgnored(path, baseDir string, matchers map[string]*gitignore.GitIgnore) b
 }
 
 // runSingleFile handles single file preview (original behavior).
-// If outputPath is provided, writes to that path instead of /tmp and skips browser.
+// If outputPath is provided, writes to that path instead of the system temporary directory and skips browser.
 func runSingleFile(filePath string, outputPath string) error {
 	markdownContent, err := os.ReadFile(filePath)
 	if err != nil {
@@ -261,7 +270,7 @@ func runSingleFile(filePath string, outputPath string) error {
 	openBrowser := false
 	if outputPath == "" {
 		outputFileName := fmt.Sprintf("mdpreview-%s.html", strings.ReplaceAll(filename, ".md", ""))
-		outputPath = filepath.Join("/tmp", outputFileName)
+		outputPath = filepath.Join(os.TempDir(), outputFileName)
 		openBrowser = true
 	}
 
@@ -281,7 +290,7 @@ func runSingleFile(filePath string, outputPath string) error {
 }
 
 // runMultiFile handles multiple files preview with sidebar.
-// If outputPath is provided, writes to that path instead of /tmp and skips browser.
+// If outputPath is provided, writes to that path instead of the system temporary directory and skips browser.
 func runMultiFile(filePaths []string, outputPath string) error {
 	conv := converter.New()
 
@@ -325,7 +334,7 @@ func runMultiFile(filePaths []string, outputPath string) error {
 	// Determine output path
 	openBrowser := false
 	if outputPath == "" {
-		outputPath = filepath.Join("/tmp", "mdpreview-multi.html")
+		outputPath = filepath.Join(os.TempDir(), "mdpreview-multi.html")
 		openBrowser = true
 	}
 

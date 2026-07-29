@@ -42,3 +42,45 @@ jobs:
 
       - name: Verify binary
         run: ./mdp --version
+
+  windows-distribution:
+    name: Windows distribution
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build Windows AMD64
+        env:
+          GOOS: windows
+          GOARCH: amd64
+        run: go build -o mdp-windows-amd64.exe ./cmd/mdp
+
+      - name: Build Windows ARM64
+        env:
+          GOOS: windows
+          GOARCH: arm64
+        run: go build -o mdp-windows-arm64.exe ./cmd/mdp
+
+      - name: Test Windows release archives
+        run: go test ./internal/updater -run 'TestReleaseAssetFor|TestExtract|TestWindowsReplacement'
+
+      - name: Validate PowerShell installer syntax
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          [void][System.Management.Automation.Language.Parser]::ParseFile(
+            (Resolve-Path scripts/install.ps1),
+            [ref]$tokens,
+            [ref]$errors
+          )
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_ }
+            exit 1
+          }
