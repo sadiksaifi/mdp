@@ -84,3 +84,7 @@ jobs:
             $errors | ForEach-Object { Write-Error $_ }
             exit 1
           }
+
+      - name: Test PowerShell installer architecture selection
+        shell: pwsh
+        run: ./scripts/install_test.ps1

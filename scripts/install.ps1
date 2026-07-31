@@ -16,15 +16,17 @@ function Write-Success([string]$Message) {
 }
 
 function Get-MdpArchitecture {
-    try {
-        $architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
+    if ($env:PROCESSOR_ARCHITEW6432) {
+        # Under x64 emulation on Windows ARM64, older .NET runtimes report X64.
+        # PROCESSOR_ARCHITEW6432 identifies the native machine architecture.
+        $architecture = $env:PROCESSOR_ARCHITEW6432
     }
-    catch {
-        $architecture = if ($env:PROCESSOR_ARCHITEW6432) {
-            $env:PROCESSOR_ARCHITEW6432
+    else {
+        try {
+            $architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString()
         }
-        else {
-            $env:PROCESSOR_ARCHITECTURE
+        catch {
+            $architecture = $env:PROCESSOR_ARCHITECTURE
         }
     }
 
