@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unsafe"
 
 	"golang.org/x/sys/windows"
 )
@@ -71,6 +72,14 @@ func RunUpgradeHelper() (bool, error) {
 }
 
 func replaceBinary(src, dst, version string) (bool, error) {
+	otherPID, err := findOtherRunningExecutable(dst)
+	if err != nil {
+		return false, fmt.Errorf("check for running mdp processes: %w", err)
+	}
+	if otherPID != 0 {
+		return false, fmt.Errorf("another mdp process (PID %d) is using %s; stop it and retry", otherPID, dst)
+	}
+
 	stagePath := dst + ".update.exe"
 	if err := os.Remove(stagePath); err != nil && !os.IsNotExist(err) {
 		return false, fmt.Errorf("remove stale upgrade helper: %w", err)
@@ -96,6 +105,64 @@ func replaceBinary(src, dst, version string) (bool, error) {
 		return false, fmt.Errorf("release Windows upgrade helper: %w", err)
 	}
 	return true, nil
+}
+
+func findOtherRunningExecutable(target string) (uint32, error) {
+	target, err := filepath.Abs(target)
+	if err != nil {
+		return 0, fmt.Errorf("resolve executable path: %w", err)
+	}
+
+	snapshot, err := windows.CreateToolhelp32Snapshot(windows.TH32CS_SNAPPROCESS, 0)
+	if err != nil {
+		return 0, fmt.Errorf("list Windows processes: %w", err)
+	}
+	defer windows.CloseHandle(snapshot)
+
+	var entry windows.ProcessEntry32
+	entry.Size = uint32(unsafe.Sizeof(entry))
+	if err := windows.Process32First(snapshot, &entry); err != nil {
+		return 0, fmt.Errorf("read Windows process list: %w", err)
+	}
+
+	currentPID := uint32(os.Getpid())
+	for {
+		if entry.ProcessID != currentPID {
+			processPath, ok := processExecutablePath(entry.ProcessID)
+			if ok && equalWindowsPaths(processPath, target) {
+				return entry.ProcessID, nil
+			}
+		}
+
+		err = windows.Process32Next(snapshot, &entry)
+		if errors.Is(err, windows.ERROR_NO_MORE_FILES) {
+			return 0, nil
+		}
+		if err != nil {
+			return 0, fmt.Errorf("read Windows process list: %w", err)
+		}
+	}
+}
+
+func processExecutablePath(pid uint32) (string, bool) {
+	handle, err := windows.OpenProcess(windows.PROCESS_QUERY_LIMITED_INFORMATION, false, pid)
+	if err != nil {
+		return "", false
+	}
+	defer windows.CloseHandle(handle)
+
+	buffer := make([]uint16, 32768)
+	size := uint32(len(buffer))
+	if err := windows.QueryFullProcessImageName(handle, 0, &buffer[0], &size); err != nil {
+		return "", false
+	}
+	return windows.UTF16ToString(buffer[:size]), true
+}
+
+func equalWindowsPaths(left, right string) bool {
+	left = strings.TrimPrefix(filepath.Clean(left), `\\?\`)
+	right = strings.TrimPrefix(filepath.Clean(right), `\\?\`)
+	return strings.EqualFold(left, right)
 }
 
 func waitForProcessExit(pid uint32, timeout time.Duration) error {
