@@ -46,18 +46,38 @@ jobs:
             goarch: amd64
             name: darwin-amd64
             runner: macos-latest
+            binary: mdp
+            archive: tar.gz
           - goos: darwin
             goarch: arm64
             name: darwin-arm64
             runner: macos-latest
+            binary: mdp
+            archive: tar.gz
           - goos: linux
             goarch: amd64
             name: linux-amd64
             runner: ubuntu-latest
+            binary: mdp
+            archive: tar.gz
           - goos: linux
             goarch: arm64
             name: linux-arm64
             runner: ubuntu-latest
+            binary: mdp
+            archive: tar.gz
+          - goos: windows
+            goarch: amd64
+            name: windows-amd64
+            runner: ubuntu-latest
+            binary: mdp.exe
+            archive: zip
+          - goos: windows
+            goarch: arm64
+            name: windows-arm64
+            runner: ubuntu-latest
+            binary: mdp.exe
+            archive: zip
     steps:
       - name: Checkout validated commit
         uses: actions/checkout@v4
@@ -75,17 +95,21 @@ jobs:
           GOARCH: ${{ matrix.goarch }}
           VERSION: ${{ needs.validate.outputs.version }}
         run: |
-          go build -ldflags "-X main.version=${VERSION}" -o mdp ./cmd/mdp
+          go build -ldflags "-X main.version=${VERSION}" -o ${{ matrix.binary }} ./cmd/mdp
 
       - name: Create archive
         run: |
-          tar -czvf mdp-${{ matrix.name }}.tar.gz mdp
+          if [ "${{ matrix.archive }}" = "zip" ]; then
+            zip mdp-${{ matrix.name }}.zip ${{ matrix.binary }}
+          else
+            tar -czvf mdp-${{ matrix.name }}.tar.gz ${{ matrix.binary }}
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: mdp-${{ matrix.name }}
-          path: mdp-${{ matrix.name }}.tar.gz
+          path: mdp-${{ matrix.name }}.${{ matrix.archive }}
 
   release:
     name: Release
@@ -134,7 +158,9 @@ jobs:
         with:
           tag_name: ${{ needs.validate.outputs.tag }}
           target_commitish: ${{ needs.validate.outputs.commit }}
-          files: artifacts/*.tar.gz
+          files: |
+            artifacts/*.tar.gz
+            artifacts/*.zip
           body: ${{ steps.changelog.outputs.content }}
 
   update-homebrew:

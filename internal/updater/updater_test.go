@@ -106,6 +106,16 @@ func TestFetchLatestRelease_MockServer(t *testing.T) {
 					BrowserDownloadURL: "https://example.com/mdp-linux-amd64.tar.gz",
 					Size:               1024,
 				},
+				{
+					Name:               "mdp-windows-amd64.zip",
+					BrowserDownloadURL: "https://example.com/mdp-windows-amd64.zip",
+					Size:               1024,
+				},
+				{
+					Name:               "mdp-windows-arm64.zip",
+					BrowserDownloadURL: "https://example.com/mdp-windows-arm64.zip",
+					Size:               1024,
+				},
 			},
 		}
 		json.NewEncoder(w).Encode(release)
@@ -119,6 +129,8 @@ func TestFetchLatestRelease_MockServer(t *testing.T) {
 		Assets: []Asset{
 			{Name: "mdp-darwin-arm64.tar.gz", BrowserDownloadURL: "https://example.com/darwin-arm64"},
 			{Name: "mdp-linux-amd64.tar.gz", BrowserDownloadURL: "https://example.com/linux-amd64"},
+			{Name: "mdp-windows-amd64.zip", BrowserDownloadURL: "https://example.com/windows-amd64"},
+			{Name: "mdp-windows-arm64.zip", BrowserDownloadURL: "https://example.com/windows-arm64"},
 		},
 	}
 
@@ -129,18 +141,27 @@ func TestFetchLatestRelease_MockServer(t *testing.T) {
 		}
 	})
 
+	for _, tt := range []struct {
+		name string
+		want string
+	}{
+		{name: "mdp-windows-amd64.zip", want: "https://example.com/windows-amd64"},
+		{name: "mdp-windows-arm64.zip", want: "https://example.com/windows-arm64"},
+	} {
+		t.Run("GetAssetURL finds "+tt.name, func(t *testing.T) {
+			url := release.GetAssetURL(tt.name)
+			if url != tt.want {
+				t.Errorf("GetAssetURL() = %q, want %q", url, tt.want)
+			}
+		})
+	}
+
 	t.Run("GetAssetURL not found", func(t *testing.T) {
-		url := release.GetAssetURL("mdp-windows-amd64.zip")
+		url := release.GetAssetURL("mdp-windows-386.zip")
 		if url != "" {
 			t.Errorf("GetAssetURL() = %q, want empty string", url)
 		}
 	})
-}
-
-func TestExtractTarGz(t *testing.T) {
-	// This test would require creating actual tar.gz files
-	// Skip for now as it's an integration-level test
-	t.Skip("Integration test - requires actual tar.gz file")
 }
 
 func TestCheckForUpdateQuick_Timeout(t *testing.T) {

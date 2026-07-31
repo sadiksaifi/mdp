@@ -94,7 +94,7 @@ func TestRun_ValidMarkdownFile(t *testing.T) {
 	}
 
 	// Verify output file was created
-	outputPath := filepath.Join("/tmp", "mdpreview-test.html")
+	outputPath := filepath.Join(os.TempDir(), "mdpreview-test.html")
 	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
 		t.Error("expected output file to be created")
 	}
@@ -169,7 +169,7 @@ func TestRun_MultipleFiles(t *testing.T) {
 	}
 
 	// Verify output file was created
-	outputPath := filepath.Join("/tmp", "mdpreview-multi.html")
+	outputPath := filepath.Join(os.TempDir(), "mdpreview-multi.html")
 	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
 		t.Error("expected output file to be created")
 	}
@@ -229,7 +229,7 @@ func TestRun_Directory(t *testing.T) {
 	}
 
 	// Verify output content contains both files
-	outputPath := filepath.Join("/tmp", "mdpreview-multi.html")
+	outputPath := filepath.Join(os.TempDir(), "mdpreview-multi.html")
 	outputContent, err := os.ReadFile(outputPath)
 	if err != nil {
 		t.Fatalf("failed to read output file: %v", err)

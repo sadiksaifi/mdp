@@ -1,8 +1,6 @@
 package updater
 
 import (
-	"archive/tar"
-	"compress/gzip"
 	"context"
 	"fmt"
 	"io"
@@ -107,7 +105,7 @@ func IsNewerVersion(latest, current string) bool {
 // PerformUpgrade upgrades mdp to the latest version.
 // Behavior depends on installation method:
 // - brew: prints upgrade instructions
-// - curl/unknown: downloads and replaces binary
+// - curl/PowerShell/unknown: downloads and replaces the binary
 // - source: prints upgrade instructions
 func PerformUpgrade(currentVersion string, force bool) error {
 	method := DetectInstallMethod()
@@ -118,7 +116,7 @@ func PerformUpgrade(currentVersion string, force bool) error {
 	case InstallMethodSource:
 		return handleSourceUpgrade()
 	case InstallMethodCurl, InstallMethodUnknown:
-		return handleCurlUpgrade(currentVersion, force)
+		return handleDirectUpgrade(currentVersion, force)
 	}
 
 	return nil
@@ -144,7 +142,7 @@ func handleSourceUpgrade() error {
 	return nil
 }
 
-func handleCurlUpgrade(currentVersion string, force bool) error {
+func handleDirectUpgrade(currentVersion string, force bool) error {
 	fmt.Println("Checking for updates...")
 
 	release, err := FetchLatestRelease()
@@ -161,16 +159,15 @@ func handleCurlUpgrade(currentVersion string, force bool) error {
 
 	fmt.Printf("Upgrading mdp %s → %s\n", currentVersion, latestVersion)
 
-	// Detect OS and architecture
-	osName := runtime.GOOS
-	archName := runtime.GOARCH
+	asset, err := releaseAssetFor(runtime.GOOS, runtime.GOARCH)
+	if err != nil {
+		return err
+	}
 
 	// Find matching asset
-	assetName := fmt.Sprintf("mdp-%s-%s.tar.gz", osName, archName)
-	downloadURL := release.GetAssetURL(assetName)
-
+	downloadURL := release.GetAssetURL(asset.archiveName)
 	if downloadURL == "" {
-		return fmt.Errorf("no release found for %s/%s", osName, archName)
+		return fmt.Errorf("no release found for %s/%s", runtime.GOOS, runtime.GOARCH)
 	}
 
 	// Download to temp directory
@@ -180,7 +177,7 @@ func handleCurlUpgrade(currentVersion string, force bool) error {
 	}
 	defer os.RemoveAll(tmpDir)
 
-	archivePath := filepath.Join(tmpDir, assetName)
+	archivePath := filepath.Join(tmpDir, asset.archiveName)
 	fmt.Println("Downloading...")
 	if err := downloadFile(downloadURL, archivePath); err != nil {
 		return fmt.Errorf("download failed: %w", err)
@@ -188,7 +185,7 @@ func handleCurlUpgrade(currentVersion string, force bool) error {
 
 	// Extract
 	fmt.Println("Extracting...")
-	if err := extractTarGz(archivePath, tmpDir); err != nil {
+	if err := extractReleaseBinary(archivePath, tmpDir, asset); err != nil {
 		return fmt.Errorf("extraction failed: %w", err)
 	}
 
@@ -198,21 +195,21 @@ func handleCurlUpgrade(currentVersion string, force bool) error {
 		return fmt.Errorf("failed to get executable path: %w", err)
 	}
 
-	newBinary := filepath.Join(tmpDir, "mdp")
+	newBinary := filepath.Join(tmpDir, asset.binaryName)
 
-	// Replace binary
+	// Replace binary. Windows defers replacement until this process exits because
+	// a running .exe cannot be overwritten.
 	fmt.Println("Installing...")
-	if err := replaceBinary(newBinary, currentExe); err != nil {
+	deferred, err := replaceBinary(newBinary, currentExe, latestVersion)
+	if err != nil {
 		return fmt.Errorf("failed to replace binary: %w", err)
 	}
+	if deferred {
+		fmt.Printf("mdp %s downloaded; installation will complete momentarily.\n", latestVersion)
+		return nil
+	}
 
-	// Update state
-	state, _ := LoadState()
-	state.CurrentVersion = latestVersion
-	state.LatestVersion = latestVersion
-	state.LastCheckTime = time.Now()
-	_ = SaveState(state)
-
+	updateInstalledVersion(latestVersion)
 	fmt.Printf("Successfully upgraded to mdp %s\n", latestVersion)
 	return nil
 }
@@ -247,75 +244,13 @@ func downloadFile(url, destPath string) error {
 	return err
 }
 
-func extractTarGz(archivePath, destDir string) error {
-	file, err := os.Open(archivePath)
+func updateInstalledVersion(version string) {
+	state, err := LoadState()
 	if err != nil {
-		return err
+		state = &State{}
 	}
-	defer file.Close()
-
-	gzr, err := gzip.NewReader(file)
-	if err != nil {
-		return err
-	}
-	defer gzr.Close()
-
-	tr := tar.NewReader(gzr)
-
-	for {
-		header, err := tr.Next()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return err
-		}
-
-		// Only extract the mdp binary
-		if header.Name != "mdp" {
-			continue
-		}
-
-		// Prevent path traversal
-		if strings.Contains(header.Name, "..") || filepath.IsAbs(header.Name) {
-			return fmt.Errorf("archive contains invalid path: %s", header.Name)
-		}
-
-		target := filepath.Join(destDir, filepath.Clean(header.Name))
-		outFile, err := os.OpenFile(target, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
-		if err != nil {
-			return err
-		}
-
-		_, copyErr := io.Copy(outFile, tr)
-		outFile.Close()
-		if copyErr != nil {
-			return copyErr
-		}
-	}
-
-	return nil
-}
-
-func replaceBinary(src, dst string) error {
-	// Read source file
-	srcData, err := os.ReadFile(src)
-	if err != nil {
-		return err
-	}
-
-	// Get destination file info for permissions
-	dstInfo, err := os.Stat(dst)
-	if err != nil {
-		return err
-	}
-
-	// On Unix, we can often rename over the running binary
-	// First try atomic rename
-	if err := os.Rename(src, dst); err == nil {
-		return nil
-	}
-
-	// Fallback: write directly (this works on most systems)
-	return os.WriteFile(dst, srcData, dstInfo.Mode())
+	state.CurrentVersion = version
+	state.LatestVersion = version
+	state.LastCheckTime = time.Now()
+	_ = SaveState(state)
 }
