@@ -14,6 +14,7 @@ const multiFileTemplate = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>%s</title>
+    <script>try{var t=localStorage.getItem('mdp-theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.dataset.theme=t;}catch(e){}</script>
     <style>
         %s
     </style>
@@ -38,6 +39,11 @@ const multiFileTemplate = `<!DOCTYPE html>
             <span class="topbar-brand">MARKDOWN PREVIEW</span>
         </div>
         <div class="topbar-right">
+            <button class="topbar-btn topbar-theme-btn" aria-label="Toggle theme" title="Toggle theme">
+                <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <div class="topbar-divider"></div>
             <button class="topbar-btn topbar-search-btn" aria-label="Search files" title="Search files (⌘K)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
             </button>
@@ -2769,8 +2775,14 @@ const multiFileMermaidScript = `
             var mermaidBlocks = document.querySelectorAll('.markdown-body pre code.language-mermaid');
             if (mermaidBlocks.length === 0) return;
 
-            // Detect dark mode
+            // Detect dark mode, preferring the manual header toggle
+            function manualTheme() {
+                var t = document.documentElement.dataset.theme;
+                return (t === 'dark' || t === 'light') ? t : null;
+            }
             function isDarkMode() {
+                var t = manualTheme();
+                if (t) return t === 'dark';
                 return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             }
 
@@ -2878,6 +2890,11 @@ const multiFileMermaidScript = `
                         });
                     }
 
+                    // Re-render diagrams when the manual header toggle changes the theme
+                    window.addEventListener('mdp-theme-change', function() {
+                        rerenderAllDiagrams(isDarkMode() ? 'dark' : 'default', 'mermaid-theme');
+                    });
+
                     // Expose print helpers for manual print triggering
                     window.mdpPrintHelpers = {
                         rerenderForPrint: function(callback) {
@@ -2911,10 +2928,10 @@ func GenerateMulti(title string, tree *filetree.TreeNode, files []filetree.FileE
 		html.EscapeString(title),
 		githubMarkdownCSS,
 		chromaCSS,
-		sidebarCSS,
+		sidebarCSS+themeCSS,
 		sidebarHTML,
 		contentHTML,
-		sidebarJS,
+		sidebarJS+themeJSInline,
 		multiFileMermaidScript,
 	)
 }
@@ -2929,10 +2946,10 @@ func GenerateMultiWithLiveReload(title string, tree *filetree.TreeNode, files []
 		html.EscapeString(title),
 		githubMarkdownCSS,
 		chromaCSS,
-		sidebarCSS,
+		sidebarCSS+themeCSS,
 		sidebarHTML,
 		contentHTML,
-		sidebarJS,
+		sidebarJS+themeJSInline,
 		multiFileMermaidScript+liveReloadScript,
 	)
 }

@@ -41,7 +41,7 @@ func TestGenerate_ValidHTMLStructure(t *testing.T) {
 		"<html lang=\"en\">",
 		"<head>",
 		"</head>",
-		"<body>",
+		"<body class=\"mdp-single\">",
 		"</body>",
 		"</html>",
 		"<meta charset=\"UTF-8\">",
