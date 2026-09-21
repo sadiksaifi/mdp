@@ -92,6 +92,10 @@ const multiFileTemplate = `<!DOCTYPE html>
             <button class="search-open-btn" aria-label="Search files" title="Search files">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
             </button>
+            <button class="open-comments-btn" aria-label="Toggle comments" title="Toggle comments (⌘/)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"></path></svg>
+                <span class="comment-count">0</span>
+            </button>
         </div>
     </div>
 
@@ -132,12 +136,6 @@ const multiFileTemplate = `<!DOCTYPE html>
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
         <span>Comment</span>
         <kbd>C</kbd>
-    </button>
-
-    <!-- Open Comments Button -->
-    <button class="open-comments-btn" title="Toggle comments (⌘/)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        <span class="comment-count">0</span>
     </button>
 
     <!-- Comments Panel -->
@@ -677,7 +675,9 @@ body:has(.sidebar.collapsed) .content {
 
     .floating-buttons .sidebar-open-btn,
     .floating-buttons .mobile-theme-btn,
-    .floating-buttons .search-open-btn {
+    .floating-buttons .search-open-btn,
+    .floating-buttons .open-comments-btn {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -711,26 +711,6 @@ body:has(.sidebar.collapsed) .content {
 
     .sidebar-overlay.active {
         pointer-events: auto;
-    }
-
-    /* Show floating comments button on mobile */
-    .open-comments-btn {
-        display: flex;
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        padding: 0;
-        background: var(--sidebar-bg);
-        border: 1px solid var(--sidebar-border);
-        border-radius: 22px;
-        color: var(--fg-muted);
-        cursor: pointer;
-        z-index: 100;
-        box-shadow: var(--floating-shadow);
     }
 
     .open-comments-btn svg {

@@ -22,11 +22,33 @@ func TestGenerate_ThemeToggle(t *testing.T) {
 	}
 }
 
-func TestGenerate_MobileThemeToggle(t *testing.T) {
+func TestGenerate_MobileHeaderContainsActions(t *testing.T) {
 	result := Generate("Test", "<p>Content</p>")
 
-	if !strings.Contains(result, `<button class="mobile-theme-btn theme-toggle-btn"`) {
-		t.Fatal("expected an accessible mobile theme toggle in single-file output")
+	headerStart := strings.Index(result, `<header class="mobile-topbar">`)
+	if headerStart == -1 {
+		t.Fatal("expected a mobile header in single-file output")
+	}
+	headerEnd := strings.Index(result[headerStart:], `</header>`)
+	if headerEnd == -1 {
+		t.Fatal("expected the mobile header to close")
+	}
+	header := result[headerStart : headerStart+headerEnd]
+	for _, want := range []string{
+		`mobile-github-link`,
+		`mobile-theme-btn theme-toggle-btn`,
+		`open-comments-btn`,
+	} {
+		if !strings.Contains(header, want) {
+			t.Errorf("expected mobile header action %q", want)
+		}
+	}
+	if !strings.Contains(result, `.mobile-topbar,`) {
+		t.Error("expected print styles to hide the mobile header")
+	}
+	if !strings.Contains(result, `.desktop-github-link {
+                display: none;`) {
+		t.Error("expected mobile styles to hide the floating desktop GitHub link")
 	}
 }
 
@@ -112,8 +134,13 @@ func TestGenerateMulti_MobileThemeToggle(t *testing.T) {
 		t.Fatal("expected mobile header in multi-file output")
 	}
 	mobileHeader := result[mobileHeaderStart:mobileHeaderEnd]
-	if !strings.Contains(mobileHeader, `<button class="mobile-theme-btn theme-toggle-btn"`) {
-		t.Fatal("expected an accessible theme toggle in the multi-file mobile header")
+	for _, want := range []string{
+		`mobile-theme-btn theme-toggle-btn`,
+		`open-comments-btn`,
+	} {
+		if !strings.Contains(mobileHeader, want) {
+			t.Errorf("expected multi-file mobile header action %q", want)
+		}
 	}
 }
 
