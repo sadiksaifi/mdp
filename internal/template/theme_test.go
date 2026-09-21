@@ -53,6 +53,21 @@ func TestGenerate_MermaidFollowsManualTheme(t *testing.T) {
 	}
 }
 
+func TestGenerateWithLiveReload_ThemeToggle(t *testing.T) {
+	result := GenerateWithLiveReload("Test", "<p>Content</p>", 8080)
+
+	for _, want := range []string{
+		"topbar-theme-btn",
+		"readSavedTheme",
+		"mdp-theme-change",
+		`html[data-theme="dark"] .markdown-body`,
+	} {
+		if !strings.Contains(result, want) {
+			t.Errorf("expected theme toggle %q in single-file live-reload output", want)
+		}
+	}
+}
+
 func TestGenerateMulti_ThemeToggle(t *testing.T) {
 	tree := &filetree.TreeNode{
 		Name:  "root",
@@ -75,6 +90,32 @@ func TestGenerateMulti_ThemeToggle(t *testing.T) {
 	} {
 		if !strings.Contains(result, want) {
 			t.Errorf("expected theme toggle %q in multi-file output", want)
+		}
+	}
+}
+
+func TestGenerateMultiWithLiveReload_ThemeToggle(t *testing.T) {
+	tree := &filetree.TreeNode{
+		Name:  "root",
+		IsDir: true,
+		Children: []*filetree.TreeNode{
+			{
+				Name:  "a.md",
+				IsDir: false,
+				File:  &filetree.FileEntry{ID: "a-md", Name: "a.md", Path: "a.md"},
+			},
+		},
+	}
+	files := []filetree.FileEntry{{ID: "a-md", Name: "a.md", Path: "a.md", Content: "<p>hi</p>"}}
+	result := GenerateMultiWithLiveReload("Test", tree, files, 8080)
+
+	for _, want := range []string{
+		"topbar-theme-btn",
+		"readSavedTheme",
+		"mdp-theme-change",
+	} {
+		if !strings.Contains(result, want) {
+			t.Errorf("expected theme toggle %q in multi-file live-reload output", want)
 		}
 	}
 }
