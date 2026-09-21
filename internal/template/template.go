@@ -1053,7 +1053,7 @@ const htmlTemplate = `<!DOCTYPE html>
         }
     </style>
 </head>
-<body>
+<body class="mdp-single">
     <!-- Desktop Top Bar -->
     <header class="topbar">
         <div class="topbar-left"></div>

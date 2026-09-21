@@ -151,3 +151,48 @@ func TestGenerateMultiWithLiveReload_ThemeToggle(t *testing.T) {
 		}
 	}
 }
+
+func TestGenerate_CommentsFollowManualTheme(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	// The hardcoded prefers-color-scheme comment rules must have data-theme
+	// counterparts, or the comments UI stays on the OS theme after a toggle.
+	for _, want := range []string{
+		`html[data-theme="dark"] .comments-panel`,
+		`html[data-theme="light"] .comments-panel`,
+		`html[data-theme="dark"] .comment-input-textarea`,
+		`html[data-theme="light"] .comment-input-textarea`,
+		`body.mdp-single .copy-comments-btn:hover`,
+	} {
+		if !strings.Contains(result, want) {
+			t.Errorf("expected manual-theme comment override %q in single-file output", want)
+		}
+	}
+}
+
+func TestGenerateMulti_CommentsFollowManualTheme(t *testing.T) {
+	tree := &filetree.TreeNode{
+		Name:  "root",
+		IsDir: true,
+		Children: []*filetree.TreeNode{
+			{
+				Name:  "a.md",
+				IsDir: false,
+				File:  &filetree.FileEntry{ID: "a-md", Name: "a.md", Path: "a.md"},
+			},
+		},
+	}
+	files := []filetree.FileEntry{{ID: "a-md", Name: "a.md", Path: "a.md", Content: "<p>hi</p>"}}
+	result := GenerateMulti("Test", tree, files)
+
+	for _, want := range []string{
+		`html[data-theme="dark"] .comments-panel`,
+		`html[data-theme="light"] .comments-panel`,
+		`html[data-theme="dark"] .comment-input-textarea`,
+		`html[data-theme="light"] .comment-input-textarea`,
+	} {
+		if !strings.Contains(result, want) {
+			t.Errorf("expected manual-theme comment override %q in multi-file output", want)
+		}
+	}
+}

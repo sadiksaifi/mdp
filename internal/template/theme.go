@@ -62,6 +62,303 @@ html[data-theme="dark"] .topbar-theme-btn .theme-icon-moon {
 html[data-theme="dark"] .topbar-theme-btn .theme-icon-sun {
     display: block;
 }
+/* Manual-theme counterparts for the hardcoded prefers-color-scheme
+   comment/shortcuts rules in both templates. The head script always sets
+data-theme, so these must reproduce the OS rendering exactly when the
+   manual choice matches the OS. Values mirror the light bases and dark
+   media blocks; both templates resolve to the same colors except where
+   noted with body.mdp-single. */
+html[data-theme="dark"] .comment-btn {
+    background: #58a6ff;
+}
+html[data-theme="dark"] .comment-highlight {
+    background-color: rgba(255, 212, 59, 0.25);
+}
+html[data-theme="dark"] .comment-highlight:hover,
+html[data-theme="dark"] .comment-highlight.active {
+    background-color: rgba(255, 212, 59, 0.45);
+}
+html[data-theme="dark"] .comments-panel {
+    background: #161b22;
+    border-left-color: #3d444d;
+}
+html[data-theme="dark"] .comments-list::-webkit-scrollbar-thumb {
+    background-color: #3d444d;
+}
+html[data-theme="dark"] .comment-entry {
+    border-bottom-color: #3d444d;
+}
+html[data-theme="dark"] .comment-entry:hover {
+    background: #21262d;
+}
+html[data-theme="dark"] .comment-entry.active {
+    background: #388bfd26;
+}
+html[data-theme="dark"] .comment-quote {
+    background: #21262d;
+    border-left-color: #58a6ff;
+    color: #9198a1;
+}
+html[data-theme="dark"] .comment-text {
+    color: #e6edf3;
+}
+html[data-theme="dark"] .comment-copy-btn,
+html[data-theme="dark"] .comment-edit-btn,
+html[data-theme="dark"] .comment-delete-btn {
+    color: #9198a1;
+}
+html[data-theme="dark"] .comment-copy-btn:hover,
+html[data-theme="dark"] .comment-edit-btn:hover {
+    color: #58a6ff;
+}
+html[data-theme="dark"] .comment-copy-btn.copied {
+    color: #3fb950;
+}
+html[data-theme="dark"] .comment-delete-btn:hover {
+    color: #f85149;
+    background: rgba(248, 81, 73, 0.1);
+}
+html[data-theme="dark"] .comment-input-form {
+    background: #161b22;
+    border-bottom-color: #3d444d;
+}
+html[data-theme="dark"] .comment-input-quote {
+    background: #21262d;
+    border-left-color: #58a6ff;
+    color: #9198a1;
+}
+html[data-theme="dark"] .comment-input-textarea {
+    background: #0d1117;
+    border-color: #3d444d;
+    color: #e6edf3;
+}
+html[data-theme="dark"] .comment-input-textarea:focus {
+    border-color: #58a6ff;
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+}
+html[data-theme="dark"] .comment-cancel-btn {
+    border-color: #3d444d;
+    color: #e6edf3;
+}
+html[data-theme="dark"] .comment-cancel-btn:hover {
+    background: #21262d;
+}
+html[data-theme="dark"] .comment-save-btn {
+    background: #58a6ff;
+}
+html[data-theme="dark"] .open-comments-btn {
+    background: #161b22;
+    border-color: #3d444d;
+    color: #9198a1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+html[data-theme="dark"] .comment-count {
+    background: #58a6ff;
+}
+html[data-theme="dark"] .comments-panel-footer {
+    border-top-color: #3d444d;
+}
+html[data-theme="dark"] .copy-comments-btn {
+    background: transparent;
+    color: #9198a1;
+}
+html[data-theme="dark"] .copy-comments-btn.copied {
+    color: #3fb950;
+    background: rgba(63, 185, 80, 0.1);
+}
+html[data-theme="dark"] .comments-empty {
+    color: #9198a1;
+}
+html[data-theme="dark"] .comments-empty kbd {
+    background: #21262d;
+}
+html[data-theme="dark"] .shortcuts-modal-overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+html[data-theme="dark"] .shortcuts-modal {
+    background: #161b22;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+html[data-theme="dark"] .shortcuts-modal-header {
+    border-bottom-color: #3d444d;
+}
+html[data-theme="dark"] .shortcuts-modal-header h2 {
+    color: #e6edf3;
+}
+html[data-theme="dark"] .shortcuts-modal-close {
+    color: #9198a1;
+}
+html[data-theme="dark"] .shortcuts-modal-close:hover {
+    color: #e6edf3;
+    background: #21262d;
+}
+html[data-theme="dark"] .shortcut-row:not(:last-child) {
+    border-bottom-color: #3d444d;
+}
+html[data-theme="dark"] .shortcut-action {
+    color: #e6edf3;
+}
+html[data-theme="dark"] .shortcut-keys kbd {
+    background: #21262d;
+    border-color: #3d444d;
+    color: #e6edf3;
+}
+/* Single-template values that differ from the multi-file template:
+   the copy-button hover wash and the shortcuts modal background stay
+   variable-driven in multi-file and already follow the toggle there. */
+html[data-theme="dark"] body.mdp-single .comment-copy-btn:hover,
+html[data-theme="dark"] body.mdp-single .comment-edit-btn:hover {
+    background: rgba(88, 166, 255, 0.1);
+}
+html[data-theme="dark"] body.mdp-single .copy-comments-btn:hover {
+    color: #58a6ff;
+    background: rgba(88, 166, 255, 0.1);
+}
+html[data-theme="light"] .comment-btn {
+    background: #0969da;
+}
+html[data-theme="light"] .comment-highlight {
+    background-color: rgba(255, 212, 59, 0.4);
+}
+html[data-theme="light"] .comment-highlight:hover,
+html[data-theme="light"] .comment-highlight.active {
+    background-color: rgba(255, 212, 59, 0.7);
+}
+html[data-theme="light"] .comments-panel {
+    background: #f6f8fa;
+    border-left-color: #d1d9e0;
+}
+html[data-theme="light"] .comments-list::-webkit-scrollbar-thumb {
+    background-color: #d1d9e0;
+}
+html[data-theme="light"] .comment-entry {
+    border-bottom-color: #d1d9e0;
+}
+html[data-theme="light"] .comment-entry:hover {
+    background: #e6e8eb;
+}
+html[data-theme="light"] .comment-entry.active {
+    background: #ddf4ff;
+}
+html[data-theme="light"] .comment-quote {
+    background: #e6e8eb;
+    border-left-color: #0969da;
+    color: #59636e;
+}
+html[data-theme="light"] .comment-text {
+    color: #1f2328;
+}
+html[data-theme="light"] .comment-copy-btn,
+html[data-theme="light"] .comment-edit-btn,
+html[data-theme="light"] .comment-delete-btn {
+    color: #59636e;
+}
+html[data-theme="light"] .comment-copy-btn:hover,
+html[data-theme="light"] .comment-edit-btn:hover {
+    color: #0969da;
+}
+html[data-theme="light"] .comment-copy-btn.copied {
+    color: #1a7f37;
+}
+html[data-theme="light"] .comment-delete-btn:hover {
+    color: #cf222e;
+    background: rgba(207, 34, 46, 0.1);
+}
+html[data-theme="light"] .comment-input-form {
+    background: #f6f8fa;
+    border-bottom-color: #d1d9e0;
+}
+html[data-theme="light"] .comment-input-quote {
+    background: #e6e8eb;
+    border-left-color: #0969da;
+    color: #59636e;
+}
+html[data-theme="light"] .comment-input-textarea {
+    background: #ffffff;
+    border-color: #d1d9e0;
+    color: #1f2328;
+}
+html[data-theme="light"] .comment-input-textarea:focus {
+    border-color: #0969da;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
+html[data-theme="light"] .comment-cancel-btn {
+    border-color: #d1d9e0;
+    color: #1f2328;
+}
+html[data-theme="light"] .comment-cancel-btn:hover {
+    background: #e6e8eb;
+}
+html[data-theme="light"] .comment-save-btn {
+    background: #0969da;
+}
+html[data-theme="light"] .open-comments-btn {
+    background: #f6f8fa;
+    border-color: #d1d9e0;
+    color: #59636e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+html[data-theme="light"] .comment-count {
+    background: #0969da;
+}
+html[data-theme="light"] .comments-panel-footer {
+    border-top-color: #d1d9e0;
+}
+html[data-theme="light"] .copy-comments-btn {
+    background: transparent;
+    color: #59636e;
+}
+html[data-theme="light"] .copy-comments-btn.copied {
+    color: #1a7f37;
+    background: rgba(26, 127, 55, 0.08);
+}
+html[data-theme="light"] .comments-empty {
+    color: #59636e;
+}
+html[data-theme="light"] .comments-empty kbd {
+    background: #e6e8eb;
+}
+html[data-theme="light"] .shortcuts-modal-overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+html[data-theme="light"] .shortcuts-modal {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+html[data-theme="light"] .shortcuts-modal-header {
+    border-bottom-color: #d1d9e0;
+}
+html[data-theme="light"] .shortcuts-modal-header h2 {
+    color: #1f2328;
+}
+html[data-theme="light"] .shortcuts-modal-close {
+    color: #59636e;
+}
+html[data-theme="light"] .shortcuts-modal-close:hover {
+    color: #1f2328;
+    background: #e6e8eb;
+}
+html[data-theme="light"] .shortcut-row:not(:last-child) {
+    border-bottom-color: #e6e8eb;
+}
+html[data-theme="light"] .shortcut-action {
+    color: #1f2328;
+}
+html[data-theme="light"] .shortcut-keys kbd {
+    background: #f6f8fa;
+    border-color: #d1d9e0;
+    color: #1f2328;
+}
+html[data-theme="light"] body.mdp-single .comment-copy-btn:hover,
+html[data-theme="light"] body.mdp-single .comment-edit-btn:hover {
+    background: rgba(9, 105, 218, 0.08);
+}
+html[data-theme="light"] body.mdp-single .copy-comments-btn:hover {
+    color: #0969da;
+    background: rgba(9, 105, 218, 0.08);
+}
+html[data-theme="light"] body.mdp-single .shortcuts-modal {
+    background: #ffffff;
+}
 `
 
 // themeJSInline wires up the toggle button: applies the saved theme (or the OS
