@@ -224,32 +224,10 @@ const multiFileTemplate = `<!DOCTYPE html>
 const sidebarCSS = `
 :root {
     --sidebar-width: 280px;
-    --sidebar-bg: #f6f8fa;
-    --sidebar-border: #d1d9e0;
-    --sidebar-hover: #e6e8eb;
-    --sidebar-active: #0969da;
-    --sidebar-active-bg: #ddf4ff;
     --content-padding: 45px;
     --transition-speed: 0.3s;
-    --fg-color: #1f2328;
-    --fg-muted: #59636e;
     --panel-section-height: 44px;
     --topbar-height: 56px;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --sidebar-bg: #161b22;
-        --sidebar-border: #3d444d;
-        --sidebar-hover: #21262d;
-        --sidebar-active: #58a6ff;
-        --sidebar-active-bg: #388bfd26;
-        --fg-color: #e6edf3;
-        --fg-muted: #9198a1;
-    }
-    body {
-        background-color: #0d1117;
-    }
 }
 
 * {
@@ -270,6 +248,7 @@ body {
     max-width: none;
     display: flex;
     min-height: 100vh;
+    background: var(--page-bg);
     color: var(--fg-color);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
 }
@@ -374,7 +353,7 @@ body {
     background: var(--sidebar-bg);
     border: 1px solid var(--sidebar-border);
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--modal-shadow);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-8px);
@@ -414,12 +393,6 @@ body {
 .download-dropdown-item svg {
     flex-shrink: 0;
     color: var(--fg-muted);
-}
-
-@media (prefers-color-scheme: dark) {
-    .download-dropdown {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
 }
 
 .topbar-comment-btn {
@@ -648,7 +621,7 @@ body:has(.sidebar.collapsed) .content {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--overlay-bg);
     z-index: 150;
     opacity: 0;
     transition: opacity var(--transition-speed) ease;
@@ -757,7 +730,7 @@ body:has(.sidebar.collapsed) .content {
         color: var(--fg-muted);
         cursor: pointer;
         z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--floating-shadow);
     }
 
     .open-comments-btn svg {
@@ -808,7 +781,7 @@ body:has(.sidebar.collapsed) .content {
 .search-palette-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--overlay-bg);
     z-index: 300;
     opacity: 0;
     visibility: hidden;
@@ -830,7 +803,7 @@ body:has(.sidebar.collapsed) .content {
     background: var(--sidebar-bg);
     border: 1px solid var(--sidebar-border);
     border-radius: 8px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--modal-shadow);
     z-index: 400;
     opacity: 0;
     visibility: hidden;
@@ -963,7 +936,7 @@ body:has(.sidebar.collapsed) .content {
     font-weight: 500;
     cursor: pointer;
     z-index: 500;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--floating-shadow);
     transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s ease;
 }
 
@@ -995,7 +968,7 @@ body:has(.sidebar.collapsed) .content {
 
 /* Comment Highlights */
 .comment-highlight {
-    background-color: rgba(255, 212, 59, 0.4);
+    background-color: var(--comment-highlight-bg);
     cursor: pointer;
     border-radius: 2px;
     padding: 1px 0;
@@ -1004,7 +977,7 @@ body:has(.sidebar.collapsed) .content {
 
 .comment-highlight:hover,
 .comment-highlight.active {
-    background-color: rgba(255, 212, 59, 0.7);
+    background-color: var(--comment-highlight-active-bg);
 }
 
 /* Comments Panel */
@@ -1133,16 +1106,16 @@ body:has(.sidebar.collapsed) .content {
 .comment-copy-btn:hover,
 .comment-edit-btn:hover {
     color: var(--sidebar-active);
-    background: rgba(9, 105, 218, 0.1);
+    background: var(--accent-wash);
 }
 
 .comment-copy-btn.copied {
-    color: #1a7f37;
+    color: var(--success-color);
 }
 
 .comment-delete-btn:hover {
-    color: #cf222e;
-    background: rgba(207, 34, 46, 0.1);
+    color: var(--danger-color);
+    background: var(--danger-bg);
 }
 
 .comment-copy-btn svg,
@@ -1176,7 +1149,7 @@ body:has(.sidebar.collapsed) .content {
     padding: 10px 12px;
     border: 1px solid var(--sidebar-border);
     border-radius: 6px;
-    background: var(--bgColor-default, #ffffff);
+    background: var(--input-bg);
     color: var(--fg-color);
     font-family: inherit;
     font-size: 14px;
@@ -1188,7 +1161,7 @@ body:has(.sidebar.collapsed) .content {
 .comment-input-textarea:focus {
     outline: none;
     border-color: var(--sidebar-active);
-    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .comment-input-actions {
@@ -1273,8 +1246,8 @@ body:has(.sidebar.collapsed) .content {
 }
 
 .copy-comments-btn.copied {
-    color: #1a7f37;
-    background: rgba(26, 127, 55, 0.08);
+    color: var(--success-color);
+    background: var(--success-bg);
 }
 
 .copy-comments-btn svg {
@@ -1315,7 +1288,7 @@ body:has(.sidebar.collapsed) .content {
 .shortcuts-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--overlay-bg);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
@@ -1335,9 +1308,9 @@ body:has(.sidebar.collapsed) .content {
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
-    background: var(--sidebar-bg);
+    background: var(--modal-bg);
     border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--modal-shadow);
     z-index: 1001;
     opacity: 0;
     visibility: hidden;
@@ -1421,56 +1394,6 @@ body:has(.sidebar.collapsed) .content {
     font-size: 12px;
     font-weight: 500;
     color: var(--fg-color);
-}
-
-@media (prefers-color-scheme: dark) {
-    .comment-highlight {
-        background-color: rgba(255, 212, 59, 0.25);
-    }
-
-    .comment-highlight:hover,
-    .comment-highlight.active {
-        background-color: rgba(255, 212, 59, 0.45);
-    }
-
-    .comment-input-textarea {
-        background: var(--bgColor-default, #0d1117);
-    }
-
-    .comment-input-textarea:focus {
-        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
-    }
-
-    .comment-copy-btn:hover,
-    .comment-edit-btn:hover {
-        background: rgba(88, 166, 255, 0.1);
-    }
-
-    .comment-copy-btn.copied {
-        color: #3fb950;
-    }
-
-    .comment-delete-btn:hover {
-        color: #f85149;
-        background: rgba(248, 81, 73, 0.1);
-    }
-
-    .open-comments-btn {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .copy-comments-btn.copied {
-        color: #3fb950;
-        background: rgba(63, 185, 80, 0.1);
-    }
-
-    .shortcuts-modal-overlay {
-        background: rgba(0, 0, 0, 0.7);
-    }
-
-    .shortcuts-modal {
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    }
 }
 
 /* Print Styles - Minimal PDF Output */

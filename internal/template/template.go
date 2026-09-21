@@ -15,25 +15,6 @@ const commentsCSS = `
 :root {
     --panel-section-height: 44px;
     --topbar-height: 56px;
-    --fg-color: #1f2328;
-    --fg-muted: #59636e;
-    --panel-bg: #f6f8fa;
-    --panel-border: #d1d9e0;
-    --panel-hover: #e6e8eb;
-    --accent-color: #0969da;
-    --accent-bg: #ddf4ff;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --fg-color: #e6edf3;
-        --fg-muted: #9198a1;
-        --panel-bg: #161b22;
-        --panel-border: #3d444d;
-        --panel-hover: #21262d;
-        --accent-color: #58a6ff;
-        --accent-bg: #388bfd26;
-    }
 }
 
 /* Desktop Top Bar */
@@ -155,7 +136,7 @@ const commentsCSS = `
     align-items: center;
     gap: 6px;
     padding: 8px 12px;
-    background: #0969da;
+    background: var(--accent-color);
     color: #ffffff;
     border: none;
     border-radius: 6px;
@@ -164,7 +145,7 @@ const commentsCSS = `
     font-weight: 500;
     cursor: pointer;
     z-index: 500;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--floating-shadow);
     transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s ease;
 }
 
@@ -196,7 +177,7 @@ const commentsCSS = `
 
 /* Comment Highlights */
 .comment-highlight {
-    background-color: rgba(255, 212, 59, 0.4);
+    background-color: var(--comment-highlight-bg);
     cursor: pointer;
     border-radius: 2px;
     padding: 1px 0;
@@ -205,7 +186,7 @@ const commentsCSS = `
 
 .comment-highlight:hover,
 .comment-highlight.active {
-    background-color: rgba(255, 212, 59, 0.7);
+    background-color: var(--comment-highlight-active-bg);
 }
 
 /* Comments Panel */
@@ -215,8 +196,8 @@ const commentsCSS = `
     top: var(--topbar-height);
     bottom: 0;
     width: 280px;
-    background: #f6f8fa;
-    border-left: 1px solid #d1d9e0;
+    background: var(--panel-bg);
+    border-left: 1px solid var(--panel-border);
     display: flex;
     flex-direction: column;
     z-index: 200;
@@ -262,42 +243,42 @@ const commentsCSS = `
 }
 
 .comments-list::-webkit-scrollbar-thumb {
-    background-color: #d1d9e0;
+    background-color: var(--panel-border);
     border-radius: 4px;
 }
 
 /* Comment Entry */
 .comment-entry {
     padding: 12px 16px;
-    border-bottom: 1px solid #d1d9e0;
+    border-bottom: 1px solid var(--panel-border);
     cursor: pointer;
     transition: background 0.15s ease;
     position: relative;
 }
 
 .comment-entry:hover {
-    background: #e6e8eb;
+    background: var(--panel-hover);
 }
 
 .comment-entry.active {
-    background: #ddf4ff;
+    background: var(--accent-bg);
 }
 
 .comment-quote {
     margin: 0 0 8px 0;
     padding: 8px 12px;
-    background: #e6e8eb;
-    border-left: 3px solid #0969da;
+    background: var(--panel-hover);
+    border-left: 3px solid var(--accent-color);
     border-radius: 0 4px 4px 0;
     font-size: 13px;
-    color: #59636e;
+    color: var(--fg-muted);
     font-style: italic;
     word-break: break-word;
 }
 
 .comment-text {
     font-size: 14px;
-    color: #1f2328;
+    color: var(--fg-color);
     line-height: 1.5;
     word-break: break-word;
 }
@@ -324,7 +305,7 @@ const commentsCSS = `
     background: none;
     border: none;
     cursor: pointer;
-    color: #59636e;
+    color: var(--fg-muted);
     padding: 4px;
     border-radius: 4px;
     transition: all 0.15s ease;
@@ -332,17 +313,17 @@ const commentsCSS = `
 
 .comment-copy-btn:hover,
 .comment-edit-btn:hover {
-    color: #0969da;
-    background: rgba(9, 105, 218, 0.1);
+    color: var(--accent-color);
+    background: var(--accent-wash);
 }
 
 .comment-copy-btn.copied {
-    color: #1a7f37;
+    color: var(--success-color);
 }
 
 .comment-delete-btn:hover {
-    color: #cf222e;
-    background: rgba(207, 34, 46, 0.1);
+    color: var(--danger-color);
+    background: var(--danger-bg);
 }
 
 .comment-copy-btn svg,
@@ -355,18 +336,18 @@ const commentsCSS = `
 /* Comment Input Form */
 .comment-input-form {
     padding: 16px;
-    border-bottom: 1px solid #d1d9e0;
-    background: #f6f8fa;
+    border-bottom: 1px solid var(--panel-border);
+    background: var(--panel-bg);
 }
 
 .comment-input-quote {
     margin: 0 0 12px 0;
     padding: 8px 12px;
-    background: #e6e8eb;
-    border-left: 3px solid #0969da;
+    background: var(--panel-hover);
+    border-left: 3px solid var(--accent-color);
     border-radius: 0 4px 4px 0;
     font-size: 13px;
-    color: #59636e;
+    color: var(--fg-muted);
     font-style: italic;
     word-break: break-word;
 }
@@ -374,10 +355,10 @@ const commentsCSS = `
 .comment-input-textarea {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #d1d9e0;
+    border: 1px solid var(--panel-border);
     border-radius: 6px;
-    background: #ffffff;
-    color: #1f2328;
+    background: var(--input-bg);
+    color: var(--fg-color);
     font-family: inherit;
     font-size: 14px;
     resize: vertical;
@@ -387,8 +368,8 @@ const commentsCSS = `
 
 .comment-input-textarea:focus {
     outline: none;
-    border-color: #0969da;
-    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .comment-input-actions {
@@ -411,19 +392,19 @@ const commentsCSS = `
 
 .comment-cancel-btn {
     background: transparent;
-    border: 1px solid #d1d9e0;
-    color: #1f2328;
+    border: 1px solid var(--panel-border);
+    color: var(--fg-color);
 }
 
 .comment-cancel-btn:hover {
-    background: #e6e8eb;
+    background: var(--panel-hover);
 }
 
 .comment-save-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #0969da;
+    background: var(--accent-color);
     border: none;
     color: #ffffff;
 }
@@ -444,7 +425,7 @@ const commentsCSS = `
     justify-content: center;
     height: var(--panel-section-height);
     padding: 0 16px;
-    border-top: 1px solid #d1d9e0;
+    border-top: 1px solid var(--panel-border);
     flex-shrink: 0;
 }
 
@@ -459,7 +440,7 @@ const commentsCSS = `
     background: transparent;
     border: none;
     border-radius: 6px;
-    color: #59636e;
+    color: var(--fg-muted);
     font-size: 12px;
     font-weight: 500;
     font-family: inherit;
@@ -468,13 +449,13 @@ const commentsCSS = `
 }
 
 .copy-comments-btn:hover {
-    color: #0969da;
-    background: rgba(9, 105, 218, 0.08);
+    color: var(--accent-color);
+    background: var(--accent-wash);
 }
 
 .copy-comments-btn.copied {
-    color: #1a7f37;
-    background: rgba(26, 127, 55, 0.08);
+    color: var(--success-color);
+    background: var(--success-bg);
 }
 
 .copy-comments-btn svg {
@@ -486,7 +467,7 @@ const commentsCSS = `
 .comments-empty {
     padding: 40px 16px;
     text-align: center;
-    color: #59636e;
+    color: var(--fg-muted);
     font-size: 14px;
 }
 
@@ -504,7 +485,7 @@ const commentsCSS = `
 .comments-empty kbd {
     display: inline-block;
     padding: 2px 6px;
-    background: #e6e8eb;
+    background: var(--panel-hover);
     border-radius: 4px;
     font-family: inherit;
     font-size: 12px;
@@ -515,7 +496,7 @@ const commentsCSS = `
 .shortcuts-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--overlay-bg);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
@@ -535,9 +516,9 @@ const commentsCSS = `
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
-    background: #ffffff;
+    background: var(--modal-bg);
     border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--modal-shadow);
     z-index: 1001;
     opacity: 0;
     visibility: hidden;
@@ -556,14 +537,14 @@ const commentsCSS = `
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    border-bottom: 1px solid #d1d9e0;
+    border-bottom: 1px solid var(--panel-border);
 }
 
 .shortcuts-modal-header h2 {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1f2328;
+    color: var(--fg-color);
 }
 
 .shortcuts-modal-close {
@@ -573,15 +554,15 @@ const commentsCSS = `
     background: none;
     border: none;
     cursor: pointer;
-    color: #59636e;
+    color: var(--fg-muted);
     padding: 4px;
     border-radius: 4px;
     transition: all 0.15s ease;
 }
 
 .shortcuts-modal-close:hover {
-    color: #1f2328;
-    background: #e6e8eb;
+    color: var(--fg-color);
+    background: var(--panel-hover);
 }
 
 .shortcuts-modal-content {
@@ -598,12 +579,12 @@ const commentsCSS = `
 }
 
 .shortcut-row:not(:last-child) {
-    border-bottom: 1px solid #e6e8eb;
+    border-bottom: 1px solid var(--panel-hover);
 }
 
 .shortcut-action {
     font-size: 14px;
-    color: #1f2328;
+    color: var(--fg-color);
 }
 
 .shortcut-keys {
@@ -614,199 +595,13 @@ const commentsCSS = `
 .shortcut-keys kbd {
     display: inline-block;
     padding: 4px 8px;
-    background: #f6f8fa;
-    border: 1px solid #d1d9e0;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
     border-radius: 6px;
     font-family: inherit;
     font-size: 12px;
     font-weight: 500;
-    color: #1f2328;
-}
-
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-    .comment-btn {
-        background: #58a6ff;
-    }
-
-    .comment-highlight {
-        background-color: rgba(255, 212, 59, 0.25);
-    }
-
-    .comment-highlight:hover,
-    .comment-highlight.active {
-        background-color: rgba(255, 212, 59, 0.45);
-    }
-
-    .comments-panel {
-        background: #161b22;
-        border-left-color: #3d444d;
-    }
-
-    .comments-list::-webkit-scrollbar-thumb {
-        background-color: #3d444d;
-    }
-
-    .comment-entry {
-        border-bottom-color: #3d444d;
-    }
-
-    .comment-entry:hover {
-        background: #21262d;
-    }
-
-    .comment-entry.active {
-        background: #388bfd26;
-    }
-
-    .comment-quote {
-        background: #21262d;
-        border-left-color: #58a6ff;
-        color: #9198a1;
-    }
-
-    .comment-text {
-        color: #e6edf3;
-    }
-
-    .comment-copy-btn,
-    .comment-edit-btn,
-    .comment-delete-btn {
-        color: #9198a1;
-    }
-
-    .comment-copy-btn:hover,
-    .comment-edit-btn:hover {
-        color: #58a6ff;
-        background: rgba(88, 166, 255, 0.1);
-    }
-
-    .comment-copy-btn.copied {
-        color: #3fb950;
-    }
-
-    .comment-delete-btn:hover {
-        color: #f85149;
-        background: rgba(248, 81, 73, 0.1);
-    }
-
-    .comment-input-form {
-        background: #161b22;
-        border-bottom-color: #3d444d;
-    }
-
-    .comment-input-quote {
-        background: #21262d;
-        border-left-color: #58a6ff;
-        color: #9198a1;
-    }
-
-    .comment-input-textarea {
-        background: #0d1117;
-        border-color: #3d444d;
-        color: #e6edf3;
-    }
-
-    .comment-input-textarea:focus {
-        border-color: #58a6ff;
-        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
-    }
-
-    .comment-cancel-btn {
-        border-color: #3d444d;
-        color: #e6edf3;
-    }
-
-    .comment-cancel-btn:hover {
-        background: #21262d;
-    }
-
-    .comment-save-btn {
-        background: #58a6ff;
-    }
-
-    .open-comments-btn {
-        background: #161b22;
-        border-color: #3d444d;
-        color: #9198a1;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .open-comments-btn:hover {
-        color: #e6edf3;
-        background: #21262d;
-    }
-
-    .comment-count {
-        background: #58a6ff;
-    }
-
-    .comments-panel-footer {
-        border-top-color: #3d444d;
-    }
-
-    .copy-comments-btn {
-        background: transparent;
-        color: #9198a1;
-    }
-
-    .copy-comments-btn:hover {
-        color: #58a6ff;
-        background: rgba(88, 166, 255, 0.1);
-    }
-
-    .copy-comments-btn.copied {
-        color: #3fb950;
-        background: rgba(63, 185, 80, 0.1);
-    }
-
-    .comments-empty {
-        color: #9198a1;
-    }
-
-    .comments-empty kbd {
-        background: #21262d;
-    }
-
-    .shortcuts-modal-overlay {
-        background: rgba(0, 0, 0, 0.7);
-    }
-
-    .shortcuts-modal {
-        background: #161b22;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .shortcuts-modal-header {
-        border-bottom-color: #3d444d;
-    }
-
-    .shortcuts-modal-header h2 {
-        color: #e6edf3;
-    }
-
-    .shortcuts-modal-close {
-        color: #9198a1;
-    }
-
-    .shortcuts-modal-close:hover {
-        color: #e6edf3;
-        background: #21262d;
-    }
-
-    .shortcut-row:not(:last-child) {
-        border-bottom-color: #3d444d;
-    }
-
-    .shortcut-action {
-        color: #e6edf3;
-    }
-
-    .shortcut-keys kbd {
-        background: #21262d;
-        border-color: #3d444d;
-        color: #e6edf3;
-    }
+    color: var(--fg-color);
 }
 
 /* Mobile Responsive */
@@ -861,7 +656,7 @@ const commentsCSS = `
         color: var(--fg-muted);
         cursor: pointer;
         z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: var(--floating-shadow);
     }
 
     .open-comments-btn svg {
@@ -1032,11 +827,6 @@ const htmlTemplate = `<!DOCTYPE html>
                 padding: 45px 20px 20px;
             }
         }
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #0d1117;
-            }
-        }
         .github-link {
             position: fixed;
             bottom: 16px;
@@ -1045,10 +835,10 @@ const htmlTemplate = `<!DOCTYPE html>
             align-items: center;
             gap: 8px;
             padding: 8px 12px;
-            background: #21262d;
-            border: 1px solid #30363d;
+            background: var(--github-link-bg);
+            border: 1px solid var(--github-link-border);
             border-radius: 8px;
-            color: #8b949e;
+            color: var(--github-link-color);
             text-decoration: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
             font-size: 12px;
@@ -1056,22 +846,11 @@ const htmlTemplate = `<!DOCTYPE html>
             z-index: 100;
         }
         .github-link:hover {
-            color: #e6edf3;
-            background: #30363d;
+            color: var(--github-link-hover-color);
+            background: var(--github-link-hover-bg);
         }
         .github-link svg {
             flex-shrink: 0;
-        }
-        @media (prefers-color-scheme: light) {
-            .github-link {
-                background: #f6f8fa;
-                border-color: #d0d7de;
-                color: #656d76;
-            }
-            .github-link:hover {
-                color: #1f2328;
-                background: #eaeef2;
-            }
         }
     </style>
 </head>

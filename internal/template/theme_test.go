@@ -186,25 +186,39 @@ func TestGenerateMultiWithLiveReload_ThemeToggle(t *testing.T) {
 	}
 }
 
-func TestGenerate_CommentsFollowManualTheme(t *testing.T) {
+func TestGenerate_ThemeSensitiveControlsUseSharedVariables(t *testing.T) {
 	result := Generate("Test", "<p>Content</p>")
 
-	// The hardcoded prefers-color-scheme comment rules must have data-theme
-	// counterparts, or the comments UI stays on the OS theme after a toggle.
 	for _, want := range []string{
-		`html[data-theme="dark"] .comments-panel`,
-		`html[data-theme="light"] .comments-panel`,
-		`html[data-theme="dark"] .comment-input-textarea`,
-		`html[data-theme="light"] .comment-input-textarea`,
-		`body.mdp-single .copy-comments-btn:hover`,
+		`--theme-light-github-bg: #f6f8fa`,
+		`--theme-dark-github-bg: #21262d`,
+		`background: var(--github-link-bg)`,
+		`background-color: var(--comment-highlight-bg)`,
 	} {
 		if !strings.Contains(result, want) {
-			t.Errorf("expected manual-theme comment override %q in single-file output", want)
+			t.Errorf("expected shared theme variable %q in single-file output", want)
+		}
+	}
+	if strings.Contains(result, `html[data-theme="dark"] .comments-panel`) {
+		t.Error("manual theme should change shared variables instead of duplicating component selectors")
+	}
+}
+
+func TestGenerate_CommentsUseThemeVariables(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	for _, want := range []string{
+		`background: var(--panel-bg)`,
+		`background: var(--input-bg)`,
+		`background: var(--accent-wash)`,
+	} {
+		if !strings.Contains(result, want) {
+			t.Errorf("expected variable-driven comment style %q in single-file output", want)
 		}
 	}
 }
 
-func TestGenerateMulti_CommentsFollowManualTheme(t *testing.T) {
+func TestGenerateMulti_CommentsUseThemeVariables(t *testing.T) {
 	tree := &filetree.TreeNode{
 		Name:  "root",
 		IsDir: true,
@@ -220,13 +234,12 @@ func TestGenerateMulti_CommentsFollowManualTheme(t *testing.T) {
 	result := GenerateMulti("Test", tree, files)
 
 	for _, want := range []string{
-		`html[data-theme="dark"] .comments-panel`,
-		`html[data-theme="light"] .comments-panel`,
-		`html[data-theme="dark"] .comment-input-textarea`,
-		`html[data-theme="light"] .comment-input-textarea`,
+		`background: var(--sidebar-bg)`,
+		`background: var(--input-bg)`,
+		`background: var(--accent-wash)`,
 	} {
 		if !strings.Contains(result, want) {
-			t.Errorf("expected manual-theme comment override %q in multi-file output", want)
+			t.Errorf("expected variable-driven comment style %q in multi-file output", want)
 		}
 	}
 }
