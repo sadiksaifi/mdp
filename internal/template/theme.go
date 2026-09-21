@@ -105,6 +105,7 @@ const themeJS = `
             if (btn) {
                 btn.addEventListener('click', function() {
                     applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark', true);
+                    window.dispatchEvent(new Event('mdp-theme-change'));
                 });
             }
             if (window.matchMedia) {

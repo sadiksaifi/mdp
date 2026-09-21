@@ -39,6 +39,20 @@ func TestGenerate_ThemeDefersToSystemUntilManualChoice(t *testing.T) {
 	}
 }
 
+func TestGenerate_MermaidFollowsManualTheme(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	// Diagrams must honor the manual toggle, not just the OS preference.
+	for _, want := range []string{
+		"manualTheme",
+		"mdp-theme-change",
+	} {
+		if !strings.Contains(result, want) {
+			t.Errorf("expected mermaid manual-theme hook %q in single-file output", want)
+		}
+	}
+}
+
 func TestGenerateMulti_ThemeToggle(t *testing.T) {
 	tree := &filetree.TreeNode{
 		Name:  "root",

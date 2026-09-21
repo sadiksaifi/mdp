@@ -2775,8 +2775,14 @@ const multiFileMermaidScript = `
             var mermaidBlocks = document.querySelectorAll('.markdown-body pre code.language-mermaid');
             if (mermaidBlocks.length === 0) return;
 
-            // Detect dark mode
+            // Detect dark mode, preferring the manual header toggle
+            function manualTheme() {
+                var t = document.documentElement.dataset.theme;
+                return (t === 'dark' || t === 'light') ? t : null;
+            }
             function isDarkMode() {
+                var t = manualTheme();
+                if (t) return t === 'dark';
                 return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             }
 
@@ -2883,6 +2889,11 @@ const multiFileMermaidScript = `
                             rerenderAllDiagrams(newTheme, 'mermaid-theme');
                         });
                     }
+
+                    // Re-render diagrams when the manual header toggle changes the theme
+                    window.addEventListener('mdp-theme-change', function() {
+                        rerenderAllDiagrams(isDarkMode() ? 'dark' : 'default', 'mermaid-theme');
+                    });
 
                     // Expose print helpers for manual print triggering
                     window.mdpPrintHelpers = {
