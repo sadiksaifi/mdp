@@ -75,8 +75,9 @@ html[data-theme="dark"] .topbar-theme-btn .theme-icon-sun {
 }
 `
 
-// themeJS wires up the toggle button: restores the saved theme, persists on
-// click, and follows the OS only when no explicit choice was saved.
+// themeJS wires up the toggle button: applies the saved theme (or the OS
+// default) without persisting, stores the choice only on click, and follows
+// the OS only while no explicit choice was saved.
 const themeJS = `
     <script>
         (function() {
@@ -84,9 +85,14 @@ const themeJS = `
             function systemTheme() {
                 return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
             }
-            function applyTheme(t) {
+            function readSavedTheme() {
+                try { return localStorage.getItem('mdp-theme'); } catch (e) { return null; }
+            }
+            function applyTheme(t, persist) {
                 root.dataset.theme = t;
-                try { localStorage.setItem('mdp-theme', t); } catch (e) {}
+                if (persist) {
+                    try { localStorage.setItem('mdp-theme', t); } catch (e) {}
+                }
                 var btn = document.querySelector('.topbar-theme-btn');
                 if (btn) {
                     var label = t === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
@@ -94,19 +100,16 @@ const themeJS = `
                     btn.setAttribute('title', label);
                 }
             }
-            if (!root.dataset.theme) applyTheme(systemTheme());
-            else applyTheme(root.dataset.theme);
+            applyTheme(readSavedTheme() || root.dataset.theme || systemTheme(), false);
             var btn = document.querySelector('.topbar-theme-btn');
             if (btn) {
                 btn.addEventListener('click', function() {
-                    applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+                    applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark', true);
                 });
             }
             if (window.matchMedia) {
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-                    try {
-                        if (!localStorage.getItem('mdp-theme')) applyTheme(systemTheme());
-                    } catch (e) { applyTheme(systemTheme()); }
+                    if (!readSavedTheme()) applyTheme(systemTheme(), false);
                 });
             }
         })();
