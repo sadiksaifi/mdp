@@ -68,6 +68,38 @@ func TestGenerateWithLiveReload_ThemeToggle(t *testing.T) {
 	}
 }
 
+func TestGenerateMulti_ThemeScriptNotNested(t *testing.T) {
+	tree := &filetree.TreeNode{
+		Name:  "root",
+		IsDir: true,
+		Children: []*filetree.TreeNode{
+			{
+				Name:  "a.md",
+				IsDir: false,
+				File:  &filetree.FileEntry{ID: "a-md", Name: "a.md", Path: "a.md"},
+			},
+		},
+	}
+	files := []filetree.FileEntry{{ID: "a-md", Name: "a.md", Path: "a.md", Content: "<p>hi</p>"}}
+	result := GenerateMulti("Test", tree, files)
+
+	// The sidebar <script> block must not contain a nested <script> tag:
+	// browsers end the outer script at the first </script>, which kills
+	// both the sidebar JS and the theme toggle.
+	openIdx := strings.Index(result, "var sidebar = document.querySelector")
+	if openIdx == -1 {
+		t.Fatal("expected sidebar JS in multi-file output")
+	}
+	blockOpen := strings.LastIndex(result[:openIdx], "<script")
+	blockClose := strings.Index(result[blockOpen:], "</script>")
+	block := result[blockOpen : blockOpen+blockClose]
+	if strings.Contains(block[len("<script"):], "<script") {
+		t.Error("nested <script> tag inside sidebar script block; theme toggle would be dead")
+	}
+	if !strings.Contains(block, "mdp-theme") {
+		t.Error("expected theme toggle code inside sidebar script block")
+	}
+}
 func TestGenerateMulti_ThemeToggle(t *testing.T) {
 	tree := &filetree.TreeNode{
 		Name:  "root",

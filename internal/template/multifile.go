@@ -2931,7 +2931,7 @@ func GenerateMulti(title string, tree *filetree.TreeNode, files []filetree.FileE
 		sidebarCSS+themeCSS,
 		sidebarHTML,
 		contentHTML,
-		sidebarJS+themeJS,
+		sidebarJS+themeJSInline,
 		multiFileMermaidScript,
 	)
 }
@@ -2949,7 +2949,7 @@ func GenerateMultiWithLiveReload(title string, tree *filetree.TreeNode, files []
 		sidebarCSS+themeCSS,
 		sidebarHTML,
 		contentHTML,
-		sidebarJS+themeJS,
+		sidebarJS+themeJSInline,
 		multiFileMermaidScript+liveReloadScript,
 	)
 }

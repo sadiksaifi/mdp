@@ -64,12 +64,14 @@ html[data-theme="dark"] .topbar-theme-btn .theme-icon-sun {
 }
 `
 
-// themeJS wires up the toggle button: applies the saved theme (or the OS
+// themeJSInline wires up the toggle button: applies the saved theme (or the OS
 // default) without persisting, stores the choice only on click, and follows
 // the OS only while no explicit choice was saved.
-const themeJS = `
-    <script>
-        (function() {
+// themeJSInline is the raw toggle script without <script> tags, for templates
+// that already provide their own script wrapper (e.g. the multi-file
+// sidebar script block). The leading semicolon guards against concatenation
+// with a previous statement missing its trailing semicolon.
+const themeJSInline = `;(function() {
             var root = document.documentElement;
             function systemTheme() {
                 return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
@@ -102,5 +104,7 @@ const themeJS = `
                     if (!readSavedTheme()) applyTheme(systemTheme(), false);
                 });
             }
-        })();
-    </script>`
+        })();`
+
+// themeJS is the standalone script block for the single-file template.
+const themeJS = "\n    <script>\n        " + themeJSInline + "\n    </script>"
