@@ -22,6 +22,14 @@ func TestGenerate_ThemeToggle(t *testing.T) {
 	}
 }
 
+func TestGenerate_MobileThemeToggle(t *testing.T) {
+	result := Generate("Test", "<p>Content</p>")
+
+	if !strings.Contains(result, `<button class="mobile-theme-btn theme-toggle-btn"`) {
+		t.Fatal("expected an accessible mobile theme toggle in single-file output")
+	}
+}
+
 func TestGenerate_ThemeDefersToSystemUntilManualChoice(t *testing.T) {
 	result := Generate("Test", "<p>Content</p>")
 
@@ -100,6 +108,32 @@ func TestGenerateMulti_ThemeScriptNotNested(t *testing.T) {
 		t.Error("expected theme toggle code inside sidebar script block")
 	}
 }
+func TestGenerateMulti_MobileThemeToggle(t *testing.T) {
+	tree := &filetree.TreeNode{
+		Name:  "root",
+		IsDir: true,
+		Children: []*filetree.TreeNode{
+			{
+				Name:  "a.md",
+				IsDir: false,
+				File:  &filetree.FileEntry{ID: "a-md", Name: "a.md", Path: "a.md"},
+			},
+		},
+	}
+	files := []filetree.FileEntry{{ID: "a-md", Name: "a.md", Path: "a.md", Content: "<p>hi</p>"}}
+	result := GenerateMulti("Test", tree, files)
+
+	mobileHeaderStart := strings.Index(result, `<div class="floating-buttons">`)
+	mobileHeaderEnd := strings.Index(result, `<div class="sidebar-overlay">`)
+	if mobileHeaderStart == -1 || mobileHeaderEnd == -1 || mobileHeaderEnd <= mobileHeaderStart {
+		t.Fatal("expected mobile header in multi-file output")
+	}
+	mobileHeader := result[mobileHeaderStart:mobileHeaderEnd]
+	if !strings.Contains(mobileHeader, `<button class="mobile-theme-btn theme-toggle-btn"`) {
+		t.Fatal("expected an accessible theme toggle in the multi-file mobile header")
+	}
+}
+
 func TestGenerateMulti_ThemeToggle(t *testing.T) {
 	tree := &filetree.TreeNode{
 		Name:  "root",
