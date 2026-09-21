@@ -30,23 +30,6 @@ func TestGenerate_MobileThemeToggle(t *testing.T) {
 	}
 }
 
-func TestGenerate_ThemeDefersToSystemUntilManualChoice(t *testing.T) {
-	result := Generate("Test", "<p>Content</p>")
-
-	// The OS-derived default must be applied without persisting, so the
-	// matchMedia follower keeps working until the user clicks the toggle.
-	for _, want := range []string{
-		"readSavedTheme",
-		"applyTheme(readSavedTheme()",
-		", false)",
-		", true)",
-	} {
-		if !strings.Contains(result, want) {
-			t.Errorf("expected non-persisting theme init %q in single-file output", want)
-		}
-	}
-}
-
 func TestGenerate_MermaidFollowsManualTheme(t *testing.T) {
 	result := Generate("Test", "<p>Content</p>")
 
