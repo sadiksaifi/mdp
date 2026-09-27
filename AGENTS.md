@@ -52,17 +52,18 @@ internal/
 assets/               # Original CSS file (also embedded in template package)
 scripts/              # Installation scripts
   install.sh          # Curl-based installer for macOS/Linux
+  install.ps1         # PowerShell installer for Windows
 ```
 
-**Single-file flow**: Read .md file → Convert to HTML via goldmark (GFM) → Generate HTML document with embedded GitHub CSS → Write to `/tmp/mdpreview-{filename}.html` → Open in browser
+**Single-file flow**: Read .md file → Convert to HTML via goldmark (GFM) → Generate HTML document with embedded GitHub CSS → Write to the system temporary directory as `mdpreview-{filename}.html` → Open in browser
 
-**Multi-file flow**: Resolve files (expand directories, respect .gitignore) → Convert all to HTML → Build file tree structure → Generate HTML with sidebar navigation → Write to `/tmp/mdpreview-multi.html` → Open in browser
+**Multi-file flow**: Resolve files (expand directories, respect .gitignore) → Convert all to HTML → Build file tree structure → Generate HTML with sidebar navigation → Write to the system temporary directory as `mdpreview-multi.html` → Open in browser
 
-**Export flow (--output/-O)**: Same as single/multi-file flow, but writes to user-specified path instead of `/tmp/` and skips browser opening
+**Export flow (--output/-O)**: Same as single/multi-file flow, but writes to the user-specified path and skips browser opening
 
 **Live reload flow (--serve)**: Resolve files → Start HTTP server → Watch files with fsnotify → On change: re-convert markdown → Notify clients via WebSocket → Browser auto-refreshes
 
-**Upgrade flow (mdp upgrade)**: Detect install method (brew/curl/source) → If brew: show upgrade instructions → If curl: fetch latest release from GitHub API → Download binary → Replace in place → Update state file
+**Upgrade flow (mdp upgrade)**: Detect install method (brew/curl/source) → If brew: show upgrade instructions → If curl, PowerShell, or unknown: fetch the matching release archive from GitHub → Extract the binary → Replace it in place. Windows runs the downloaded binary as a short-lived helper that waits for the original process to exit before replacing `mdp.exe`.
 
 **Auto-update check**: On each `mdp` run → Check if 24h since last check → Query GitHub API (2s timeout, non-blocking) → Cache result → Show notification if update available
 
@@ -72,8 +73,8 @@ scripts/              # Installation scripts
 - Syntax highlighting uses goldmark-highlighting with Chroma (200+ languages supported)
 - Chroma classes are mapped to GitHub's PrettyLights CSS variables for consistent theming
 - Code blocks have a copy button (appears on hover) for easy clipboard copying
-- Single file output: `/tmp/mdpreview-{filename}.html`
-- Multi-file output: `/tmp/mdpreview-multi.html`
+- Single file output: `<system temp>/mdpreview-{filename}.html`
+- Multi-file output: `<system temp>/mdpreview-multi.html`
 - Live reload uses WebSocket for instant browser refresh on file changes
 - Cross-platform: supports macOS (`open`), Linux (`xdg-open`), and Windows (`rundll32`)
 - Directory scanning respects `.gitignore` files at all levels using `github.com/sabhiram/go-gitignore`

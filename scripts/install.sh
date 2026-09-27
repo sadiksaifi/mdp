@@ -51,7 +51,7 @@ detect_os() {
             OS="linux"
             ;;
         MINGW*|MSYS*|CYGWIN*)
-            error "Windows is not supported by this installer. Please download manually from GitHub."
+            error "Use PowerShell on Windows: irm https://raw.githubusercontent.com/sadiksaifi/mdp/main/scripts/install.ps1 | iex"
             ;;
         *)
             error "Unsupported operating system: $(uname -s)"

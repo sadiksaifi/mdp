@@ -41,7 +41,15 @@ brew install sadiksaifi/tap/mdp
 curl -fsSL https://raw.githubusercontent.com/sadiksaifi/mdp/main/scripts/install.sh | sh
 ```
 
-This installs mdp to `~/.local/bin` and automatically configures your PATH.
+This installs `mdp` to `~/.local/bin` and automatically configures your PATH.
+
+### PowerShell (Windows)
+
+```powershell
+irm https://raw.githubusercontent.com/sadiksaifi/mdp/main/scripts/install.ps1 | iex
+```
+
+This installs `mdp.exe` to `%LOCALAPPDATA%\Programs\mdp`, and automatically configures your PATH.
 
 ### From Source
 
@@ -73,6 +81,14 @@ brew upgrade sadiksaifi/tap/mdp
 ```bash
 mdp upgrade
 ```
+
+### PowerShell Installation
+
+```powershell
+mdp upgrade
+```
+
+On Windows, mdp safely finishes replacing `mdp.exe` after the running upgrade process exits.
 
 mdp automatically checks for updates and notifies you when a new version is available.
 
@@ -154,8 +170,8 @@ mdp --serve --port 3000 ./docs/    # Start server on port 3000
 
 | Mode | Output |
 |------|--------|
-| **Single file** | Opens `/tmp/mdpreview-{filename}.html` in your default browser |
-| **Multiple files/directory** | Opens `/tmp/mdpreview-multi.html` with sidebar navigation |
+| **Single file** | Opens `mdpreview-{filename}.html` from your system temporary directory in your default browser |
+| **Multiple files/directory** | Opens `mdpreview-multi.html` from your system temporary directory with sidebar navigation |
 | **Export mode (`-O`)** | Writes HTML to specified file path |
 | **Live reload mode** | Starts HTTP server at `http://localhost:<port>` with WebSocket auto-refresh |
 
