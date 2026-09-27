@@ -17,7 +17,7 @@ A fast CLI tool that previews Markdown files in your browser with GitHub-styled 
 | **GitHub Flavored Markdown** | Tables, task lists, strikethrough, and autolinks |
 | **Syntax Highlighting** | 200+ languages via Chroma with GitHub-styled colors |
 | **Copy to Clipboard** | Hover over code blocks to copy with one click |
-| **Dark Mode** | Automatically follows system preference |
+| **Dark Mode** | Follows system preference, with a manual toggle in the header |
 | **Multi-file Support** | Preview multiple files with sidebar navigation |
 | **Directory Support** | Preview all `.md` files in a directory |
 | **Live Reload Server** | Watch files and auto-refresh on changes |

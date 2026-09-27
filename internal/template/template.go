@@ -15,25 +15,6 @@ const commentsCSS = `
 :root {
     --panel-section-height: 44px;
     --topbar-height: 56px;
-    --fg-color: #1f2328;
-    --fg-muted: #59636e;
-    --panel-bg: #f6f8fa;
-    --panel-border: #d1d9e0;
-    --panel-hover: #e6e8eb;
-    --accent-color: #0969da;
-    --accent-bg: #ddf4ff;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --fg-color: #e6edf3;
-        --fg-muted: #9198a1;
-        --panel-bg: #161b22;
-        --panel-border: #3d444d;
-        --panel-hover: #21262d;
-        --accent-color: #58a6ff;
-        --accent-bg: #388bfd26;
-    }
 }
 
 /* Desktop Top Bar */
@@ -144,6 +125,10 @@ const commentsCSS = `
     margin: 0 4px;
 }
 
+.mobile-topbar {
+    display: none;
+}
+
 /* Comment Button */
 .comment-btn {
     position: absolute;
@@ -151,7 +136,7 @@ const commentsCSS = `
     align-items: center;
     gap: 6px;
     padding: 8px 12px;
-    background: #0969da;
+    background: var(--accent-color);
     color: #ffffff;
     border: none;
     border-radius: 6px;
@@ -160,7 +145,7 @@ const commentsCSS = `
     font-weight: 500;
     cursor: pointer;
     z-index: 500;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--floating-shadow);
     transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s ease;
 }
 
@@ -192,7 +177,7 @@ const commentsCSS = `
 
 /* Comment Highlights */
 .comment-highlight {
-    background-color: rgba(255, 212, 59, 0.4);
+    background-color: var(--comment-highlight-bg);
     cursor: pointer;
     border-radius: 2px;
     padding: 1px 0;
@@ -201,7 +186,7 @@ const commentsCSS = `
 
 .comment-highlight:hover,
 .comment-highlight.active {
-    background-color: rgba(255, 212, 59, 0.7);
+    background-color: var(--comment-highlight-active-bg);
 }
 
 /* Comments Panel */
@@ -211,8 +196,8 @@ const commentsCSS = `
     top: var(--topbar-height);
     bottom: 0;
     width: 280px;
-    background: #f6f8fa;
-    border-left: 1px solid #d1d9e0;
+    background: var(--panel-bg);
+    border-left: 1px solid var(--panel-border);
     display: flex;
     flex-direction: column;
     z-index: 200;
@@ -258,42 +243,42 @@ const commentsCSS = `
 }
 
 .comments-list::-webkit-scrollbar-thumb {
-    background-color: #d1d9e0;
+    background-color: var(--panel-border);
     border-radius: 4px;
 }
 
 /* Comment Entry */
 .comment-entry {
     padding: 12px 16px;
-    border-bottom: 1px solid #d1d9e0;
+    border-bottom: 1px solid var(--panel-border);
     cursor: pointer;
     transition: background 0.15s ease;
     position: relative;
 }
 
 .comment-entry:hover {
-    background: #e6e8eb;
+    background: var(--panel-hover);
 }
 
 .comment-entry.active {
-    background: #ddf4ff;
+    background: var(--accent-bg);
 }
 
 .comment-quote {
     margin: 0 0 8px 0;
     padding: 8px 12px;
-    background: #e6e8eb;
-    border-left: 3px solid #0969da;
+    background: var(--panel-hover);
+    border-left: 3px solid var(--accent-color);
     border-radius: 0 4px 4px 0;
     font-size: 13px;
-    color: #59636e;
+    color: var(--fg-muted);
     font-style: italic;
     word-break: break-word;
 }
 
 .comment-text {
     font-size: 14px;
-    color: #1f2328;
+    color: var(--fg-color);
     line-height: 1.5;
     word-break: break-word;
 }
@@ -320,7 +305,7 @@ const commentsCSS = `
     background: none;
     border: none;
     cursor: pointer;
-    color: #59636e;
+    color: var(--fg-muted);
     padding: 4px;
     border-radius: 4px;
     transition: all 0.15s ease;
@@ -328,17 +313,17 @@ const commentsCSS = `
 
 .comment-copy-btn:hover,
 .comment-edit-btn:hover {
-    color: #0969da;
-    background: rgba(9, 105, 218, 0.1);
+    color: var(--accent-color);
+    background: var(--accent-wash);
 }
 
 .comment-copy-btn.copied {
-    color: #1a7f37;
+    color: var(--success-color);
 }
 
 .comment-delete-btn:hover {
-    color: #cf222e;
-    background: rgba(207, 34, 46, 0.1);
+    color: var(--danger-color);
+    background: var(--danger-bg);
 }
 
 .comment-copy-btn svg,
@@ -351,18 +336,18 @@ const commentsCSS = `
 /* Comment Input Form */
 .comment-input-form {
     padding: 16px;
-    border-bottom: 1px solid #d1d9e0;
-    background: #f6f8fa;
+    border-bottom: 1px solid var(--panel-border);
+    background: var(--panel-bg);
 }
 
 .comment-input-quote {
     margin: 0 0 12px 0;
     padding: 8px 12px;
-    background: #e6e8eb;
-    border-left: 3px solid #0969da;
+    background: var(--panel-hover);
+    border-left: 3px solid var(--accent-color);
     border-radius: 0 4px 4px 0;
     font-size: 13px;
-    color: #59636e;
+    color: var(--fg-muted);
     font-style: italic;
     word-break: break-word;
 }
@@ -370,10 +355,10 @@ const commentsCSS = `
 .comment-input-textarea {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #d1d9e0;
+    border: 1px solid var(--panel-border);
     border-radius: 6px;
-    background: #ffffff;
-    color: #1f2328;
+    background: var(--input-bg);
+    color: var(--fg-color);
     font-family: inherit;
     font-size: 14px;
     resize: vertical;
@@ -383,8 +368,8 @@ const commentsCSS = `
 
 .comment-input-textarea:focus {
     outline: none;
-    border-color: #0969da;
-    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .comment-input-actions {
@@ -407,19 +392,19 @@ const commentsCSS = `
 
 .comment-cancel-btn {
     background: transparent;
-    border: 1px solid #d1d9e0;
-    color: #1f2328;
+    border: 1px solid var(--panel-border);
+    color: var(--fg-color);
 }
 
 .comment-cancel-btn:hover {
-    background: #e6e8eb;
+    background: var(--panel-hover);
 }
 
 .comment-save-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #0969da;
+    background: var(--accent-color);
     border: none;
     color: #ffffff;
 }
@@ -440,7 +425,7 @@ const commentsCSS = `
     justify-content: center;
     height: var(--panel-section-height);
     padding: 0 16px;
-    border-top: 1px solid #d1d9e0;
+    border-top: 1px solid var(--panel-border);
     flex-shrink: 0;
 }
 
@@ -455,7 +440,7 @@ const commentsCSS = `
     background: transparent;
     border: none;
     border-radius: 6px;
-    color: #59636e;
+    color: var(--fg-muted);
     font-size: 12px;
     font-weight: 500;
     font-family: inherit;
@@ -464,13 +449,13 @@ const commentsCSS = `
 }
 
 .copy-comments-btn:hover {
-    color: #0969da;
-    background: rgba(9, 105, 218, 0.08);
+    color: var(--accent-color);
+    background: var(--accent-wash);
 }
 
 .copy-comments-btn.copied {
-    color: #1a7f37;
-    background: rgba(26, 127, 55, 0.08);
+    color: var(--success-color);
+    background: var(--success-bg);
 }
 
 .copy-comments-btn svg {
@@ -482,7 +467,7 @@ const commentsCSS = `
 .comments-empty {
     padding: 40px 16px;
     text-align: center;
-    color: #59636e;
+    color: var(--fg-muted);
     font-size: 14px;
 }
 
@@ -500,7 +485,7 @@ const commentsCSS = `
 .comments-empty kbd {
     display: inline-block;
     padding: 2px 6px;
-    background: #e6e8eb;
+    background: var(--panel-hover);
     border-radius: 4px;
     font-family: inherit;
     font-size: 12px;
@@ -511,7 +496,7 @@ const commentsCSS = `
 .shortcuts-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--overlay-bg);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
@@ -531,9 +516,9 @@ const commentsCSS = `
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
-    background: #ffffff;
+    background: var(--modal-bg);
     border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--modal-shadow);
     z-index: 1001;
     opacity: 0;
     visibility: hidden;
@@ -552,14 +537,14 @@ const commentsCSS = `
     justify-content: space-between;
     align-items: center;
     padding: 16px 20px;
-    border-bottom: 1px solid #d1d9e0;
+    border-bottom: 1px solid var(--panel-border);
 }
 
 .shortcuts-modal-header h2 {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: #1f2328;
+    color: var(--fg-color);
 }
 
 .shortcuts-modal-close {
@@ -569,15 +554,15 @@ const commentsCSS = `
     background: none;
     border: none;
     cursor: pointer;
-    color: #59636e;
+    color: var(--fg-muted);
     padding: 4px;
     border-radius: 4px;
     transition: all 0.15s ease;
 }
 
 .shortcuts-modal-close:hover {
-    color: #1f2328;
-    background: #e6e8eb;
+    color: var(--fg-color);
+    background: var(--panel-hover);
 }
 
 .shortcuts-modal-content {
@@ -594,12 +579,12 @@ const commentsCSS = `
 }
 
 .shortcut-row:not(:last-child) {
-    border-bottom: 1px solid #e6e8eb;
+    border-bottom: 1px solid var(--panel-hover);
 }
 
 .shortcut-action {
     font-size: 14px;
-    color: #1f2328;
+    color: var(--fg-color);
 }
 
 .shortcut-keys {
@@ -610,199 +595,13 @@ const commentsCSS = `
 .shortcut-keys kbd {
     display: inline-block;
     padding: 4px 8px;
-    background: #f6f8fa;
-    border: 1px solid #d1d9e0;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
     border-radius: 6px;
     font-family: inherit;
     font-size: 12px;
     font-weight: 500;
-    color: #1f2328;
-}
-
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-    .comment-btn {
-        background: #58a6ff;
-    }
-
-    .comment-highlight {
-        background-color: rgba(255, 212, 59, 0.25);
-    }
-
-    .comment-highlight:hover,
-    .comment-highlight.active {
-        background-color: rgba(255, 212, 59, 0.45);
-    }
-
-    .comments-panel {
-        background: #161b22;
-        border-left-color: #3d444d;
-    }
-
-    .comments-list::-webkit-scrollbar-thumb {
-        background-color: #3d444d;
-    }
-
-    .comment-entry {
-        border-bottom-color: #3d444d;
-    }
-
-    .comment-entry:hover {
-        background: #21262d;
-    }
-
-    .comment-entry.active {
-        background: #388bfd26;
-    }
-
-    .comment-quote {
-        background: #21262d;
-        border-left-color: #58a6ff;
-        color: #9198a1;
-    }
-
-    .comment-text {
-        color: #e6edf3;
-    }
-
-    .comment-copy-btn,
-    .comment-edit-btn,
-    .comment-delete-btn {
-        color: #9198a1;
-    }
-
-    .comment-copy-btn:hover,
-    .comment-edit-btn:hover {
-        color: #58a6ff;
-        background: rgba(88, 166, 255, 0.1);
-    }
-
-    .comment-copy-btn.copied {
-        color: #3fb950;
-    }
-
-    .comment-delete-btn:hover {
-        color: #f85149;
-        background: rgba(248, 81, 73, 0.1);
-    }
-
-    .comment-input-form {
-        background: #161b22;
-        border-bottom-color: #3d444d;
-    }
-
-    .comment-input-quote {
-        background: #21262d;
-        border-left-color: #58a6ff;
-        color: #9198a1;
-    }
-
-    .comment-input-textarea {
-        background: #0d1117;
-        border-color: #3d444d;
-        color: #e6edf3;
-    }
-
-    .comment-input-textarea:focus {
-        border-color: #58a6ff;
-        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
-    }
-
-    .comment-cancel-btn {
-        border-color: #3d444d;
-        color: #e6edf3;
-    }
-
-    .comment-cancel-btn:hover {
-        background: #21262d;
-    }
-
-    .comment-save-btn {
-        background: #58a6ff;
-    }
-
-    .open-comments-btn {
-        background: #161b22;
-        border-color: #3d444d;
-        color: #9198a1;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .open-comments-btn:hover {
-        color: #e6edf3;
-        background: #21262d;
-    }
-
-    .comment-count {
-        background: #58a6ff;
-    }
-
-    .comments-panel-footer {
-        border-top-color: #3d444d;
-    }
-
-    .copy-comments-btn {
-        background: transparent;
-        color: #9198a1;
-    }
-
-    .copy-comments-btn:hover {
-        color: #58a6ff;
-        background: rgba(88, 166, 255, 0.1);
-    }
-
-    .copy-comments-btn.copied {
-        color: #3fb950;
-        background: rgba(63, 185, 80, 0.1);
-    }
-
-    .comments-empty {
-        color: #9198a1;
-    }
-
-    .comments-empty kbd {
-        background: #21262d;
-    }
-
-    .shortcuts-modal-overlay {
-        background: rgba(0, 0, 0, 0.7);
-    }
-
-    .shortcuts-modal {
-        background: #161b22;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .shortcuts-modal-header {
-        border-bottom-color: #3d444d;
-    }
-
-    .shortcuts-modal-header h2 {
-        color: #e6edf3;
-    }
-
-    .shortcuts-modal-close {
-        color: #9198a1;
-    }
-
-    .shortcuts-modal-close:hover {
-        color: #e6edf3;
-        background: #21262d;
-    }
-
-    .shortcut-row:not(:last-child) {
-        border-bottom-color: #3d444d;
-    }
-
-    .shortcut-action {
-        color: #e6edf3;
-    }
-
-    .shortcut-keys kbd {
-        background: #21262d;
-        border-color: #3d444d;
-        color: #e6edf3;
-    }
+    color: var(--fg-color);
 }
 
 /* Mobile Responsive */
@@ -810,6 +609,56 @@ const commentsCSS = `
     /* Hide desktop top bar on mobile */
     .topbar {
         display: none;
+    }
+
+    .mobile-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px 0 16px;
+        background: var(--panel-bg);
+        border-bottom: 1px solid var(--panel-border);
+        z-index: 250;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    }
+
+    .mobile-topbar-brand {
+        color: var(--fg-color);
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .mobile-topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .mobile-header-btn {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        border-radius: 6px;
+        color: var(--fg-muted);
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .mobile-header-btn:hover {
+        color: var(--fg-color);
+        background: var(--panel-hover);
     }
 
     .comments-panel {
@@ -820,26 +669,6 @@ const commentsCSS = `
     .comment-btn {
         font-size: 12px;
         padding: 6px 10px;
-    }
-
-    /* Show floating comments button on mobile */
-    .open-comments-btn {
-        display: flex;
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        padding: 0;
-        background: var(--panel-bg);
-        border: 1px solid var(--panel-border);
-        border-radius: 22px;
-        color: var(--fg-muted);
-        cursor: pointer;
-        z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     .open-comments-btn svg {
@@ -877,6 +706,7 @@ const commentsCSS = `
 
     /* Hide ALL UI elements */
     .topbar,
+    .mobile-topbar,
     .sidebar,
     .sidebar-overlay,
     .floating-buttons,
@@ -987,6 +817,7 @@ const htmlTemplate = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>%s</title>
+    <script>try{var t=localStorage.getItem('mdp-theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.dataset.theme=t;}catch(e){}</script>
     <style>
         %s
     </style>
@@ -1006,12 +837,7 @@ const htmlTemplate = `<!DOCTYPE html>
         }
         @media (max-width: 768px) {
             body {
-                padding: 45px 20px 20px;
-            }
-        }
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #0d1117;
+                padding: 78px 20px 20px;
             }
         }
         .github-link {
@@ -1022,10 +848,10 @@ const htmlTemplate = `<!DOCTYPE html>
             align-items: center;
             gap: 8px;
             padding: 8px 12px;
-            background: #21262d;
-            border: 1px solid #30363d;
+            background: var(--github-link-bg);
+            border: 1px solid var(--github-link-border);
             border-radius: 8px;
-            color: #8b949e;
+            color: var(--github-link-color);
             text-decoration: none;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
             font-size: 12px;
@@ -1033,26 +859,20 @@ const htmlTemplate = `<!DOCTYPE html>
             z-index: 100;
         }
         .github-link:hover {
-            color: #e6edf3;
-            background: #30363d;
+            color: var(--github-link-hover-color);
+            background: var(--github-link-hover-bg);
         }
         .github-link svg {
             flex-shrink: 0;
         }
-        @media (prefers-color-scheme: light) {
-            .github-link {
-                background: #f6f8fa;
-                border-color: #d0d7de;
-                color: #656d76;
-            }
-            .github-link:hover {
-                color: #1f2328;
-                background: #eaeef2;
+        @media (max-width: 768px) {
+            .desktop-github-link {
+                display: none;
             }
         }
     </style>
 </head>
-<body>
+<body class="mdp-single">
     <!-- Desktop Top Bar -->
     <header class="topbar">
         <div class="topbar-left"></div>
@@ -1060,6 +880,11 @@ const htmlTemplate = `<!DOCTYPE html>
             <span class="topbar-brand">MARKDOWN PREVIEW</span>
         </div>
         <div class="topbar-right">
+            <button class="topbar-btn topbar-theme-btn theme-toggle-btn" aria-label="Toggle theme" title="Toggle theme">
+                <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <div class="topbar-divider"></div>
             <button class="topbar-btn topbar-comment-btn" aria-label="Toggle comments" title="Toggle comments (⌘/)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 <span class="topbar-comment-count">0</span>
@@ -1075,10 +900,27 @@ const htmlTemplate = `<!DOCTYPE html>
         </div>
     </header>
 
+    <header class="mobile-topbar">
+        <span class="mobile-topbar-brand">MARKDOWN PREVIEW</span>
+        <div class="mobile-topbar-actions">
+            <a href="https://github.com/sadiksaifi/mdp" class="mobile-header-btn mobile-github-link" target="_blank" rel="noopener noreferrer" aria-label="Star on GitHub" title="Star on GitHub">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+            <button class="mobile-header-btn mobile-theme-btn theme-toggle-btn" aria-label="Toggle theme" title="Toggle theme">
+                <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <button class="mobile-header-btn open-comments-btn" aria-label="Toggle comments" title="Toggle comments (⌘/)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"></path></svg>
+                <span class="comment-count">0</span>
+            </button>
+        </div>
+    </header>
+
     <article class="markdown-body">
         %s
     </article>
-    <a href="https://github.com/sadiksaifi/mdp" class="github-link" target="_blank" rel="noopener noreferrer" title="Star on GitHub">
+    <a href="https://github.com/sadiksaifi/mdp" class="github-link desktop-github-link" target="_blank" rel="noopener noreferrer" title="Star on GitHub">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
         <span>Star on GitHub</span>
     </a>
@@ -1152,8 +994,14 @@ const mermaidScript = `
             var mermaidBlocks = document.querySelectorAll('.markdown-body pre code.language-mermaid');
             if (mermaidBlocks.length === 0) return;
 
-            // Detect dark mode
+            // Detect dark mode, preferring the manual header toggle
+            function manualTheme() {
+                var t = document.documentElement.dataset.theme;
+                return (t === 'dark' || t === 'light') ? t : null;
+            }
             function isDarkMode() {
+                var t = manualTheme();
+                if (t) return t === 'dark';
                 return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             }
 
@@ -1260,6 +1108,11 @@ const mermaidScript = `
                             rerenderAllDiagrams(newTheme, 'mermaid-theme');
                         });
                     }
+
+                    // Re-render diagrams when the manual header toggle changes the theme
+                    window.addEventListener('mdp-theme-change', function() {
+                        rerenderAllDiagrams(isDarkMode() ? 'dark' : 'default', 'mermaid-theme');
+                    });
 
                     // Expose print helpers for manual print triggering
                     window.mdpPrintHelpers = {
@@ -1935,12 +1788,6 @@ const commentsHTML = `
         <kbd>C</kbd>
     </button>
 
-    <!-- Open Comments Button -->
-    <button class="open-comments-btn" title="Toggle comments (⌘/)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        <span class="comment-count">0</span>
-    </button>
-
     <!-- Comments Panel -->
     <aside class="comments-panel" role="complementary" aria-label="Comments">
         <div class="comments-panel-header">
@@ -2009,12 +1856,12 @@ const commentsHTML = `
 
 // Generate creates a complete HTML document with the given title and content.
 func Generate(title, content string) string {
-	scripts := copyButtonScript + mermaidScript + commentsJS
-	return fmt.Sprintf(htmlTemplate, title, githubMarkdownCSS, chromaCSS, commentsCSS, content, commentsHTML, scripts)
+	scripts := copyButtonScript + mermaidScript + commentsJS + themeJS
+	return fmt.Sprintf(htmlTemplate, title, githubMarkdownCSS, chromaCSS, commentsCSS+themeCSS, content, commentsHTML, scripts)
 }
 
 // GenerateWithLiveReload creates an HTML document with live reload support.
 func GenerateWithLiveReload(title, content string, port int) string {
-	scripts := copyButtonScript + mermaidScript + commentsJS + fmt.Sprintf(liveReloadScript, port)
-	return fmt.Sprintf(htmlTemplate, title, githubMarkdownCSS, chromaCSS, commentsCSS, content, commentsHTML, scripts)
+	scripts := copyButtonScript + mermaidScript + commentsJS + fmt.Sprintf(liveReloadScript, port) + themeJS
+	return fmt.Sprintf(htmlTemplate, title, githubMarkdownCSS, chromaCSS, commentsCSS+themeCSS, content, commentsHTML, scripts)
 }

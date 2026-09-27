@@ -14,6 +14,7 @@ const multiFileTemplate = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>%s</title>
+    <script>try{var t=localStorage.getItem('mdp-theme');if(!t){t=(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}document.documentElement.dataset.theme=t;}catch(e){}</script>
     <style>
         %s
     </style>
@@ -38,6 +39,11 @@ const multiFileTemplate = `<!DOCTYPE html>
             <span class="topbar-brand">MARKDOWN PREVIEW</span>
         </div>
         <div class="topbar-right">
+            <button class="topbar-btn topbar-theme-btn theme-toggle-btn" aria-label="Toggle theme" title="Toggle theme">
+                <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <div class="topbar-divider"></div>
             <button class="topbar-btn topbar-search-btn" aria-label="Search files" title="Search files (⌘K)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
             </button>
@@ -78,9 +84,19 @@ const multiFileTemplate = `<!DOCTYPE html>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 6a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2l0 -12" /><path d="M15 4l0 16" /></svg>
         </button>
         <span class="topbar-title">MARKDOWN PREVIEW</span>
-        <button class="search-open-btn" aria-label="Search files" title="Search files">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
-        </button>
+        <div class="floating-buttons-actions">
+            <button class="mobile-theme-btn theme-toggle-btn" aria-label="Toggle theme" title="Toggle theme">
+                <svg class="theme-icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg class="theme-icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            </button>
+            <button class="search-open-btn" aria-label="Search files" title="Search files">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path d="M21 21l-6 -6" /></svg>
+            </button>
+            <button class="open-comments-btn" aria-label="Toggle comments" title="Toggle comments (⌘/)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"></path></svg>
+                <span class="comment-count">0</span>
+            </button>
+        </div>
     </div>
 
     <div class="sidebar-overlay"></div>
@@ -120,12 +136,6 @@ const multiFileTemplate = `<!DOCTYPE html>
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
         <span>Comment</span>
         <kbd>C</kbd>
-    </button>
-
-    <!-- Open Comments Button -->
-    <button class="open-comments-btn" title="Toggle comments (⌘/)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        <span class="comment-count">0</span>
     </button>
 
     <!-- Comments Panel -->
@@ -212,32 +222,10 @@ const multiFileTemplate = `<!DOCTYPE html>
 const sidebarCSS = `
 :root {
     --sidebar-width: 280px;
-    --sidebar-bg: #f6f8fa;
-    --sidebar-border: #d1d9e0;
-    --sidebar-hover: #e6e8eb;
-    --sidebar-active: #0969da;
-    --sidebar-active-bg: #ddf4ff;
     --content-padding: 45px;
     --transition-speed: 0.3s;
-    --fg-color: #1f2328;
-    --fg-muted: #59636e;
     --panel-section-height: 44px;
     --topbar-height: 56px;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --sidebar-bg: #161b22;
-        --sidebar-border: #3d444d;
-        --sidebar-hover: #21262d;
-        --sidebar-active: #58a6ff;
-        --sidebar-active-bg: #388bfd26;
-        --fg-color: #e6edf3;
-        --fg-muted: #9198a1;
-    }
-    body {
-        background-color: #0d1117;
-    }
 }
 
 * {
@@ -258,6 +246,7 @@ body {
     max-width: none;
     display: flex;
     min-height: 100vh;
+    background: var(--page-bg);
     color: var(--fg-color);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
 }
@@ -362,7 +351,7 @@ body {
     background: var(--sidebar-bg);
     border: 1px solid var(--sidebar-border);
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--modal-shadow);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-8px);
@@ -402,12 +391,6 @@ body {
 .download-dropdown-item svg {
     flex-shrink: 0;
     color: var(--fg-muted);
-}
-
-@media (prefers-color-scheme: dark) {
-    .download-dropdown {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
 }
 
 .topbar-comment-btn {
@@ -636,7 +619,7 @@ body:has(.sidebar.collapsed) .content {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--overlay-bg);
     z-index: 150;
     opacity: 0;
     transition: opacity var(--transition-speed) ease;
@@ -685,8 +668,16 @@ body:has(.sidebar.collapsed) .content {
         z-index: 250;
     }
 
+    .floating-buttons-actions {
+        display: flex;
+        align-items: center;
+    }
+
     .floating-buttons .sidebar-open-btn,
-    .floating-buttons .search-open-btn {
+    .floating-buttons .mobile-theme-btn,
+    .floating-buttons .search-open-btn,
+    .floating-buttons .open-comments-btn {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -720,26 +711,6 @@ body:has(.sidebar.collapsed) .content {
 
     .sidebar-overlay.active {
         pointer-events: auto;
-    }
-
-    /* Show floating comments button on mobile */
-    .open-comments-btn {
-        display: flex;
-        position: fixed;
-        bottom: 16px;
-        right: 16px;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        padding: 0;
-        background: var(--sidebar-bg);
-        border: 1px solid var(--sidebar-border);
-        border-radius: 22px;
-        color: var(--fg-muted);
-        cursor: pointer;
-        z-index: 100;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     .open-comments-btn svg {
@@ -790,7 +761,7 @@ body:has(.sidebar.collapsed) .content {
 .search-palette-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--overlay-bg);
     z-index: 300;
     opacity: 0;
     visibility: hidden;
@@ -812,7 +783,7 @@ body:has(.sidebar.collapsed) .content {
     background: var(--sidebar-bg);
     border: 1px solid var(--sidebar-border);
     border-radius: 8px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--modal-shadow);
     z-index: 400;
     opacity: 0;
     visibility: hidden;
@@ -945,7 +916,7 @@ body:has(.sidebar.collapsed) .content {
     font-weight: 500;
     cursor: pointer;
     z-index: 500;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--floating-shadow);
     transition: opacity 0.15s ease, transform 0.15s ease, background 0.15s ease;
 }
 
@@ -977,7 +948,7 @@ body:has(.sidebar.collapsed) .content {
 
 /* Comment Highlights */
 .comment-highlight {
-    background-color: rgba(255, 212, 59, 0.4);
+    background-color: var(--comment-highlight-bg);
     cursor: pointer;
     border-radius: 2px;
     padding: 1px 0;
@@ -986,7 +957,7 @@ body:has(.sidebar.collapsed) .content {
 
 .comment-highlight:hover,
 .comment-highlight.active {
-    background-color: rgba(255, 212, 59, 0.7);
+    background-color: var(--comment-highlight-active-bg);
 }
 
 /* Comments Panel */
@@ -1115,16 +1086,16 @@ body:has(.sidebar.collapsed) .content {
 .comment-copy-btn:hover,
 .comment-edit-btn:hover {
     color: var(--sidebar-active);
-    background: rgba(9, 105, 218, 0.1);
+    background: var(--accent-wash);
 }
 
 .comment-copy-btn.copied {
-    color: #1a7f37;
+    color: var(--success-color);
 }
 
 .comment-delete-btn:hover {
-    color: #cf222e;
-    background: rgba(207, 34, 46, 0.1);
+    color: var(--danger-color);
+    background: var(--danger-bg);
 }
 
 .comment-copy-btn svg,
@@ -1158,7 +1129,7 @@ body:has(.sidebar.collapsed) .content {
     padding: 10px 12px;
     border: 1px solid var(--sidebar-border);
     border-radius: 6px;
-    background: var(--bgColor-default, #ffffff);
+    background: var(--input-bg);
     color: var(--fg-color);
     font-family: inherit;
     font-size: 14px;
@@ -1170,7 +1141,7 @@ body:has(.sidebar.collapsed) .content {
 .comment-input-textarea:focus {
     outline: none;
     border-color: var(--sidebar-active);
-    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+    box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .comment-input-actions {
@@ -1255,8 +1226,8 @@ body:has(.sidebar.collapsed) .content {
 }
 
 .copy-comments-btn.copied {
-    color: #1a7f37;
-    background: rgba(26, 127, 55, 0.08);
+    color: var(--success-color);
+    background: var(--success-bg);
 }
 
 .copy-comments-btn svg {
@@ -1297,7 +1268,7 @@ body:has(.sidebar.collapsed) .content {
 .shortcuts-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--overlay-bg);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
@@ -1317,9 +1288,9 @@ body:has(.sidebar.collapsed) .content {
     width: 90%;
     max-width: 400px;
     max-height: 80vh;
-    background: var(--sidebar-bg);
+    background: var(--modal-bg);
     border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--modal-shadow);
     z-index: 1001;
     opacity: 0;
     visibility: hidden;
@@ -1403,56 +1374,6 @@ body:has(.sidebar.collapsed) .content {
     font-size: 12px;
     font-weight: 500;
     color: var(--fg-color);
-}
-
-@media (prefers-color-scheme: dark) {
-    .comment-highlight {
-        background-color: rgba(255, 212, 59, 0.25);
-    }
-
-    .comment-highlight:hover,
-    .comment-highlight.active {
-        background-color: rgba(255, 212, 59, 0.45);
-    }
-
-    .comment-input-textarea {
-        background: var(--bgColor-default, #0d1117);
-    }
-
-    .comment-input-textarea:focus {
-        box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
-    }
-
-    .comment-copy-btn:hover,
-    .comment-edit-btn:hover {
-        background: rgba(88, 166, 255, 0.1);
-    }
-
-    .comment-copy-btn.copied {
-        color: #3fb950;
-    }
-
-    .comment-delete-btn:hover {
-        color: #f85149;
-        background: rgba(248, 81, 73, 0.1);
-    }
-
-    .open-comments-btn {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .copy-comments-btn.copied {
-        color: #3fb950;
-        background: rgba(63, 185, 80, 0.1);
-    }
-
-    .shortcuts-modal-overlay {
-        background: rgba(0, 0, 0, 0.7);
-    }
-
-    .shortcuts-modal {
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    }
 }
 
 /* Print Styles - Minimal PDF Output */
@@ -2769,8 +2690,14 @@ const multiFileMermaidScript = `
             var mermaidBlocks = document.querySelectorAll('.markdown-body pre code.language-mermaid');
             if (mermaidBlocks.length === 0) return;
 
-            // Detect dark mode
+            // Detect dark mode, preferring the manual header toggle
+            function manualTheme() {
+                var t = document.documentElement.dataset.theme;
+                return (t === 'dark' || t === 'light') ? t : null;
+            }
             function isDarkMode() {
+                var t = manualTheme();
+                if (t) return t === 'dark';
                 return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             }
 
@@ -2878,6 +2805,11 @@ const multiFileMermaidScript = `
                         });
                     }
 
+                    // Re-render diagrams when the manual header toggle changes the theme
+                    window.addEventListener('mdp-theme-change', function() {
+                        rerenderAllDiagrams(isDarkMode() ? 'dark' : 'default', 'mermaid-theme');
+                    });
+
                     // Expose print helpers for manual print triggering
                     window.mdpPrintHelpers = {
                         rerenderForPrint: function(callback) {
@@ -2911,10 +2843,10 @@ func GenerateMulti(title string, tree *filetree.TreeNode, files []filetree.FileE
 		html.EscapeString(title),
 		githubMarkdownCSS,
 		chromaCSS,
-		sidebarCSS,
+		sidebarCSS+themeCSS,
 		sidebarHTML,
 		contentHTML,
-		sidebarJS,
+		sidebarJS+themeJSInline,
 		multiFileMermaidScript,
 	)
 }
@@ -2929,10 +2861,10 @@ func GenerateMultiWithLiveReload(title string, tree *filetree.TreeNode, files []
 		html.EscapeString(title),
 		githubMarkdownCSS,
 		chromaCSS,
-		sidebarCSS,
+		sidebarCSS+themeCSS,
 		sidebarHTML,
 		contentHTML,
-		sidebarJS,
+		sidebarJS+themeJSInline,
 		multiFileMermaidScript+liveReloadScript,
 	)
 }
